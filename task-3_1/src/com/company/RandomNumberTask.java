@@ -18,6 +18,6 @@ public class RandomNumberTask {
             randomNumber /= 10;
         }
 
-        System.out.println("Sum: " + sum);
+        System.out.println("Sum of digits in this number: " + sum);
     }
 }
