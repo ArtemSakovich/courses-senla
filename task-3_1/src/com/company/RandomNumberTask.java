@@ -1,14 +1,18 @@
 package com.company;
 
 /*
-  Программа выводит на экран случайно сгенерированное трёхзначное натуральное число и сумму его цифр
+  The program displays a randomly generated three-digit natural number and the sum of its digits
 */
 
 public class RandomNumberTask {
 
     public static void main(String[] args) {
 
-        int randomNumber = (new java.util.Random()).nextInt(999);;
+        int randomNumber = 0;
+
+        while (randomNumber / 100 == 0) {
+            randomNumber = (new java.util.Random()).nextInt(999);
+        }
         int sum = 0;
 
         System.out.println("Random number: " + randomNumber);
