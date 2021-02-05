@@ -1,4 +1,4 @@
-# The electronic administrator of a hotel. #
+# The electronic administrator of a hotel #
 #### The program should provide the ability to:  ####
 - Come in a room
 - Feed out of a room  
