@@ -2,12 +2,12 @@ package com.company.service;
 
 import com.company.api.dao.IGuestDao;
 import com.company.api.service.IGuestService;
-import com.company.model.Guest;
-import com.company.model.Room;
-import com.company.model.RoomStatus;
+import com.company.model.*;
 import com.company.util.IdGenerator;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,17 +37,14 @@ public class GuestService implements IGuestService {
         return guestDao.getById(id);
     }
 
-    public void flipToRoom(Guest guest, Room room) {
+    @Override
+    public void flipToRoom(Guest guest, Room room, LocalDate checkOutDate) {
         if (room.getRoomStatus().equals(RoomStatus.FREE)) {
-            guest.setRoom(room);
-            List<Guest> guestToFlip = new ArrayList<>();
-            guestToFlip.add(guest);
-            room.setTenants(guestToFlip);
-            if (room.getTenants().size() >= room.getNumberOfBeds()) {
+            RoomAssignment roomAssignment = new RoomAssignment(room, guest, LocalDate.now(), checkOutDate,
+                    RoomAssignmentStatus.ACTIVE);
+            if (room.getNumberOfBeds().equals(room.getTenants().size())) {
                 room.setRoomStatus(RoomStatus.OCCUPIED);
             }
-            System.out.println(guest.getName() + " " + guest.getSurname() +
-                    " has been flipped to room №" + room.getRoomNumber());
         } else {
             System.out.println("Unfortunately, this room is " +
                     room.getRoomStatus().toString().toLowerCase(Locale.ROOT));
@@ -56,16 +53,46 @@ public class GuestService implements IGuestService {
 
     @Override
     public void evictFromRoom(Guest guest) {
-        if (guest.getRoom() != null) {
-            List<Guest> guestsFromRoomForEviction = new ArrayList<>(guest.getRoom().getTenants());
-            guestsFromRoomForEviction.remove(guest);
-            guest.getRoom().setTenants(guestsFromRoomForEviction);
-            System.out.println(guest.getName() + " " + guest.getSurname() +
-                    " has been evict from room №" + guest.getRoom().getRoomNumber());
-            guest.setRoom(null);
-        }else {
-            System.out.println("Unfortunately, " + guest.getName() + " " +
-                    guest.getSurname() + " does not live in any of the rooms");
+        for (RoomAssignment roomAssignment : guest.getRoomAssignments()) {
+            if (roomAssignment.getRoomAssignmentStatus().equals(RoomAssignmentStatus.ACTIVE)) {
+                roomAssignment.setRoomAssignmentStatus(RoomAssignmentStatus.CLOSED);
+                System.out.println(guest.getName() + " " + guest.getSurname() +
+                        " has been evict from room №" + roomAssignment.getRoom());
+            } else {
+                System.out.println("Unfortunately, " + guest.getName() + " " +
+                        guest.getSurname() + " currently does not live in any of the rooms");
+            }
         }
+    }
+
+    @Override
+    public void orderMaintenance(Guest guest, Maintenance maintenance) {
+        if(guest.getActiveRoomAssignments().isEmpty()) {
+            System.out.println("Unfortunately, " + guest.getName() + " " +
+                    guest.getSurname() + " currently currently not a hotel guest");
+        } else {
+            for (RoomAssignment roomAssignment : guest.getActiveRoomAssignments()) {
+                maintenance.setOrderDate(LocalDate.now());
+                roomAssignment.setMaintenanceOrderDate(LocalDate.now());
+                roomAssignment.setMaintenance(maintenance);
+            }
+        }
+    }
+
+    @Override
+    public List<Guest> getAllGuests() {
+        return guestDao.getAll();
+    }
+
+    @Override
+    public Integer getNumberOfGuests() {
+        return getAllGuests().size();
+    }
+
+    @Override
+    public List<Guest> sortGuestsABC() {
+        List<Guest> guestsToSort = new ArrayList<>(getAllGuests());
+        Collections.sort(guestsToSort);
+        return guestsToSort;
     }
 }

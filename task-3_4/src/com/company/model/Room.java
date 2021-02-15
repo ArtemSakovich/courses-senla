@@ -1,23 +1,27 @@
 package com.company.model;
 
 import com.company.util.IdGenerator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Room extends AEntity {
+public class Room extends AEntity implements Comparable<Room> {
+
     private Integer roomNumber;
     private RoomStatus roomStatus;
     private Double roomPrice;
     private Integer numberOfBeds;
+    private Integer numberOfStars;
     private Long id;
-    private List<Guest> tenants = new ArrayList<>();
+    private List<RoomAssignment> roomAssignments;
 
-    public Room(int roomNumber, double roomPrice, int numberOfBeds) {
+    public Room(Integer roomNumber, Double roomPrice, Integer numberOfBeds, Integer numberOfStars) {
         this.roomNumber = roomNumber;
         this.roomStatus = RoomStatus.FREE;
         this.roomPrice = roomPrice;
         this.numberOfBeds = numberOfBeds;
+        this.numberOfStars = numberOfStars;
     }
 
     public Integer getRoomNumber() {
@@ -53,17 +57,46 @@ public class Room extends AEntity {
     }
 
     public List<Guest> getTenants() {
+        List<Guest> tenants = new ArrayList<>();
+        for (RoomAssignment assignment : roomAssignments) {
+            if (RoomAssignmentStatus.ACTIVE.equals(assignment.getRoomAssignmentStatus())) {
+                tenants.add(assignment.getGuest());
+            }
+        }
         return tenants;
     }
 
-    public void setTenants(List<Guest> tenants) {
-        this.tenants.addAll(tenants);
+    public List<RoomAssignment> getRoomAssignments() {
+        return roomAssignments;
+    }
+
+    public List<RoomAssignment> getActiveRoomAssignments() {
+        List<RoomAssignment> activeRoomAssignments = new ArrayList<>();
+        for (RoomAssignment roomAssignment : getRoomAssignments()) {
+            if (roomAssignment.getRoomAssignmentStatus().equals(RoomAssignmentStatus.ACTIVE)) {
+                activeRoomAssignments.add(roomAssignment);
+            }
+        }
+        return activeRoomAssignments;
+    }
+
+    public Integer getNumberOfStars() {
+        return numberOfStars;
+    }
+
+    public void setNumberOfStars(Integer numberOfStars) {
+        this.numberOfStars = numberOfStars;
+    }
+
+    public boolean isFree() {
+        return roomStatus.equals(RoomStatus.FREE);
     }
 
     @Override
     public int hashCode() {
         int result = 17;
         result = 31 * result + roomNumber;
+        result = 31 * result + numberOfStars;
         result = 31 * result + roomStatus.hashCode();
         result = (int) (31 * result + roomPrice);
         result = 31 * result + numberOfBeds;
@@ -83,13 +116,19 @@ public class Room extends AEntity {
         return room.roomNumber.equals(roomNumber) &&
                 room.roomStatus.equals(roomStatus) &&
                 room.roomPrice.equals(roomPrice) &&
-                room.numberOfBeds.equals(numberOfBeds);
+                room.numberOfBeds.equals(numberOfBeds) &&
+                room.numberOfStars.equals(numberOfStars);
+    }
+
+    @Override                              // most requested sort
+    public int compareTo(Room r) {
+        return (int) (this.roomPrice - r.roomPrice);
     }
 
     @Override
     public String toString() {
-        return "Room #" + getId() + ". Room number: " + roomNumber +
-                ". Number of beds: " + numberOfBeds + ". Price: " + roomPrice +
-                ". Status: " + roomStatus.toString();
+        return "Room #" + getId() + ". Room number: " + roomNumber + ". Number of stars: "
+                + numberOfStars + ". Number of beds: " + numberOfBeds +
+                ". Price: " + roomPrice + ". Status: " + roomStatus.toString();
     }
 }

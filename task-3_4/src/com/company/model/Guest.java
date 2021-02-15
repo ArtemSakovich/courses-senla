@@ -1,15 +1,22 @@
 package com.company.model;
 
 import com.company.util.IdGenerator;
+import org.jetbrains.annotations.NotNull;
 
-public class Guest extends AEntity {
+import java.net.Inet4Address;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+public class Guest extends AEntity implements Comparable<Guest> {
+
     private String name;
     private String surname;
     private Integer age;
     private Long id;
-    private Room room;
+    private List<RoomAssignment> roomAssignments;
 
-    public Guest(String name, String surname, int age) {
+    public Guest(String name, String surname, Integer age) {
         this.name = name;
         this.surname = surname;
         this.age = age;
@@ -39,12 +46,18 @@ public class Guest extends AEntity {
         this.age = age;
     }
 
-    public Room getRoom() {
-        return room;
+    public List<RoomAssignment> getRoomAssignments() {
+        return roomAssignments;
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
+    public List<RoomAssignment> getActiveRoomAssignments() {
+        List<RoomAssignment> activeRoomAssignments = new ArrayList<>();
+        for (RoomAssignment roomAssignment : getRoomAssignments()) {
+            if (roomAssignment.getRoomAssignmentStatus().equals(RoomAssignmentStatus.ACTIVE)) {
+                activeRoomAssignments.add(roomAssignment);
+            }
+        }
+        return activeRoomAssignments;
     }
 
     @Override
@@ -68,17 +81,19 @@ public class Guest extends AEntity {
 
         return guest.name.equals(name) &&
                 guest.surname.equals(surname) &&
-                guest.age == age;
+                guest.age.equals(age);
+    }
+
+    @Override
+    public int compareTo(Guest g) {                 // most requested sort
+        String thisFullName = this.name + this.surname;
+        String gFullName = g.name + g.surname;
+        return thisFullName.toLowerCase().compareTo(gFullName.toLowerCase());
     }
 
     @Override
     public String toString() {
-        if (room == null) {
-            return "Guest #" + getId() + ". Name: " + name +
-                    " " + surname + ". Age: " + age;
-        } else {
-            return "Guest #" + getId() + ". Name: " + name +
-                    " " + surname + ". Age: " + age + ". Room №" + room.getRoomNumber();
-        }
+        return "Guest #" + getId() + ". Name: " + name +
+                " " + surname + ". Age: " + age;
     }
 }

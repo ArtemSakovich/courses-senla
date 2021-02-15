@@ -1,6 +1,7 @@
 package com.company.model;
 
 public abstract class AEntity {
+
     private Long id;
 
     public Long getId() {

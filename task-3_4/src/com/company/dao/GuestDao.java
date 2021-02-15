@@ -13,6 +13,5 @@ public class GuestDao extends AbstractDao<Guest> implements IGuestDao {
         guest.setName(updatedGuest.getName());
         guest.setSurname(updatedGuest.getSurname());
         guest.setAge(updatedGuest.getAge());
-        guest.setRoom(updatedGuest.getRoom());
     }
 }

@@ -2,14 +2,22 @@ package com.company.model;
 
 import com.company.util.IdGenerator;
 
+import java.time.LocalDate;
+import java.util.Calendar;
+
 public class Maintenance extends AEntity {
+
     private String maintenanceName;
     private Double maintenancePrice;
+    private MaintenanceSection maintenanceSection;
+    private Guest guest;
+    private LocalDate orderDate;
     private Long id;
 
-    public Maintenance(String maintenanceName, double maintenancePrice) {
+    public Maintenance(String maintenanceName, Double maintenancePrice, MaintenanceSection maintenanceSection) {
         this.maintenanceName = maintenanceName;
         this.maintenancePrice = maintenancePrice;
+        this.maintenanceSection = maintenanceSection;
     }
 
     public String getMaintenanceName() {
@@ -26,6 +34,22 @@ public class Maintenance extends AEntity {
 
     public void setMaintenancePrice(Double maintenancePrice) {
         this.maintenancePrice = maintenancePrice;
+    }
+
+    public MaintenanceSection getMaintenanceSection() {
+        return maintenanceSection;
+    }
+
+    public void setMaintenanceSection(MaintenanceSection maintenanceSection) {
+        this.maintenanceSection = maintenanceSection;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
     }
 
     @Override
@@ -52,7 +76,7 @@ public class Maintenance extends AEntity {
 
     @Override
     public String toString() {
-        return "Maintenance #" + getId() + ". Name: " + maintenanceName +
+        return "Section: " + maintenanceSection + ". Maintenance #" + getId() + ". Name: " + maintenanceName +
                 ". Price: " + maintenancePrice;
     }
 }
