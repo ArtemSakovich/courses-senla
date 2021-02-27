@@ -2,7 +2,6 @@ package com.company.dao;
 
 import com.company.api.dao.IGenericDao;
 import com.company.model.AEntity;
-import com.company.model.Room;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,7 @@ public class AbstractDao<T extends AEntity> implements IGenericDao<T> {
 
     @Override
     public List<T> getAll() {
-        return repository;
+        return new ArrayList<>(repository);
     }
 
     @Override

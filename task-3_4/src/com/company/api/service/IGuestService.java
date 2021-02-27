@@ -1,8 +1,6 @@
 package com.company.api.service;
 
 import com.company.model.Guest;
-import com.company.model.Maintenance;
-import com.company.model.Room;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,9 +12,9 @@ public interface IGuestService {
 
     Guest getById(Long id);
 
-    void flipToRoom(Guest guest, Room room, LocalDate checkOutDate);
+    void accommodateToRoom(Long guestId, Long roomId, LocalDate checkOutDate);
 
-    void evictFromRoom(Guest guest);
+    void evictFromRoom(Long guestId);
 
     List<Guest> getAllGuests();
 
@@ -24,5 +22,7 @@ public interface IGuestService {
 
     public List<Guest> sortGuestsABC();
 
-    public void orderMaintenance(Guest guest, Maintenance maintenance);
+    public void orderMaintenance(Long guestId, Long maintenanceId);
+
+    public Double getAmountOfPaymentForTheRoom(Long guestId);
 }

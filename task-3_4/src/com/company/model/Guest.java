@@ -1,12 +1,7 @@
 package com.company.model;
 
-import com.company.util.IdGenerator;
-import org.jetbrains.annotations.NotNull;
-
-import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class Guest extends AEntity implements Comparable<Guest> {
 
@@ -14,7 +9,7 @@ public class Guest extends AEntity implements Comparable<Guest> {
     private String surname;
     private Integer age;
     private Long id;
-    private List<RoomAssignment> roomAssignments;
+    private List<RoomAssignment> roomAssignments = new ArrayList<>();
 
     public Guest(String name, String surname, Integer age) {
         this.name = name;
@@ -48,6 +43,10 @@ public class Guest extends AEntity implements Comparable<Guest> {
 
     public List<RoomAssignment> getRoomAssignments() {
         return roomAssignments;
+    }
+
+    public void setRoomAssignment(RoomAssignment roomAssignment) {
+        roomAssignments.add(roomAssignment);
     }
 
     public List<RoomAssignment> getActiveRoomAssignments() {

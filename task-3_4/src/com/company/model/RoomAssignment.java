@@ -14,7 +14,7 @@ public class RoomAssignment extends AEntity {
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     private RoomAssignmentStatus roomAssignmentStatus;
-    private List<LocalDate> maintenanceOrderDates = new ArrayList<>();
+    private LocalDate createdOn;
     private List<Maintenance> maintenances = new ArrayList<Maintenance>();
 
     public RoomAssignment(Room room, Guest guest, LocalDate checkInDate, LocalDate checkOutDate,
@@ -23,11 +23,16 @@ public class RoomAssignment extends AEntity {
         this.guest = guest;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
+        this.createdOn = LocalDate.now();
         this.roomAssignmentStatus = roomAssignmentStatus;
     }
 
     public Room getRoom() {
         return room;
+    }
+
+    public Integer getRoomNumber() {
+        return room.getRoomNumber();
     }
 
     public void setRoom(Room room) {
@@ -66,17 +71,18 @@ public class RoomAssignment extends AEntity {
         this.roomAssignmentStatus = roomAssignmentStatus;
     }
 
-    public void setMaintenanceOrderDate(LocalDate orderDate) {
-        maintenanceOrderDates.add(orderDate);
+    public LocalDate getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(LocalDate createdOn) {
+        this.createdOn = createdOn;
     }
 
     public void setMaintenance(Maintenance maintenance) {
         maintenances.add(maintenance);
     }
 
-    public List<LocalDate> getMaintenanceOrderDates() {
-        return maintenanceOrderDates;
-    }
 
     public List<Maintenance> getMaintenances() {
         return maintenances;
@@ -93,5 +99,4 @@ public class RoomAssignment extends AEntity {
         }
         return room.getRoomPrice() * DAYS.between(checkInDate, checkOutDate) + totalMaintenancePrice;
     }
-
 }

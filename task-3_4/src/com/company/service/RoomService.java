@@ -4,17 +4,19 @@ import com.company.api.dao.IRoomDao;
 import com.company.api.service.IRoomService;
 import com.company.model.*;
 import com.company.util.IdGenerator;
-import com.company.util.comparators.roomComparators.CheckOutDateComparator;
-import com.company.util.comparators.roomComparators.NumberOfBedsComparator;
-import com.company.util.comparators.roomComparators.NumberOfStarsComparator;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class RoomService implements IRoomService {
     private final IRoomDao roomDao;
+    Logger log = Logger.getLogger(RoomService.class.getName());
 
     public RoomService(IRoomDao roomDao) {
         this.roomDao = roomDao;
@@ -40,13 +42,25 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public void changeRoomStatus(Room room, RoomStatus newRoomStatus) {
-        room.setRoomStatus(newRoomStatus);
+    public void changeRoomStatus(Long id, RoomStatus newRoomStatus) {
+        Room roomToChangeStatus = roomDao.getById(id);
+        if (roomToChangeStatus == null) {
+            log.log(Level.SEVERE, "Incorrect input when trying to change room status");
+            throw new IllegalArgumentException("Room not found!");
+        } else {
+            roomToChangeStatus.setRoomStatus(newRoomStatus);
+        }
     }
 
     @Override
-    public void changeRoomPrice(Room room, Double newRoomPrice) {
-        room.setRoomPrice(newRoomPrice);
+    public void changeRoomPrice(Long id, Double newRoomPrice) {
+        Room roomToChangePrice = roomDao.getById(id);
+        if (roomToChangePrice == null) {
+            log.log(Level.SEVERE, "Incorrect input when trying to change room price");
+            throw new IllegalArgumentException("Room not found!");
+        } else {
+            roomToChangePrice.setRoomPrice(newRoomPrice);
+        }
     }
 
     @Override
@@ -54,16 +68,11 @@ public class RoomService implements IRoomService {
         return roomDao.getAll();
     }
 
-
     @Override
     public List<Room> getAllFreeRooms() {
-        List<Room> freeRooms = new ArrayList<>();
-        for (Room room : getAllRooms()) {
-            if (room.getRoomStatus().equals(RoomStatus.FREE)) {
-                freeRooms.add(room);
-            }
-        }
-        return freeRooms;
+        return getAllRooms().stream()
+                .filter(Room::isFree)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -75,15 +84,17 @@ public class RoomService implements IRoomService {
     public List<Room> getFreeRoomsByDate(LocalDate requiredDate) {
         List<Room> freeRooms = new ArrayList<>();
         for (Room room : getAllRooms()) {
-            for (RoomAssignment roomAssignment : room.getRoomAssignments()) {
-                if (roomAssignment.getRoomAssignmentStatus().equals(RoomAssignmentStatus.ACTIVE) ||
-                        roomAssignment.getRoomAssignmentStatus().equals(RoomAssignmentStatus.BOOKED))
+            if (room.getRoomAssignments().isEmpty()) {
+                freeRooms.add(room);
+            } else {
+                for (RoomAssignment roomAssignment : room.getRoomAssignments()) {
                     if (requiredDate.isAfter(roomAssignment.getCheckOutDate())) {
                         freeRooms.add(room);
                     }
+                }
             }
         }
-        return freeRooms;
+        return freeRooms.stream().distinct().collect(Collectors.toList());
     }
 
     @Override
@@ -96,14 +107,14 @@ public class RoomService implements IRoomService {
     @Override
     public List<Room> sortRoomsByNumberOfBeds() {
         List<Room> roomsToSort = new ArrayList<>(getAllRooms());
-        Collections.sort(roomsToSort, new NumberOfBedsComparator());
+        roomsToSort.sort(Comparator.comparingInt(Room::getNumberOfBeds));
         return roomsToSort;
     }
 
     @Override
     public List<Room> sortRoomsByNumberOfStars() {
         List<Room> roomsToSort = new ArrayList<>(getAllRooms());
-        Collections.sort(roomsToSort, new NumberOfStarsComparator());
+        roomsToSort.sort(Comparator.comparingInt(Room::getNumberOfStars));
         return roomsToSort;
     }
 
@@ -117,52 +128,53 @@ public class RoomService implements IRoomService {
     @Override
     public List<Room> sortFreeRoomsByNumberOfBeds() {
         List<Room> roomsToSort = new ArrayList<>(getAllFreeRooms());
-        Collections.sort(roomsToSort, new NumberOfBedsComparator());
+        roomsToSort.sort(Comparator.comparingInt(Room::getNumberOfBeds));
         return roomsToSort;
     }
 
     @Override
     public List<Room> sortFreeRoomsByNumberOfStars() {
         List<Room> roomsToSort = new ArrayList<>(getAllFreeRooms());
-        Collections.sort(roomsToSort, new NumberOfStarsComparator());
+        roomsToSort.sort(Comparator.comparingInt(Room::getNumberOfStars));
         return roomsToSort;
     }
 
     @Override
-    public List<Room> sortRoomsByCheckOutDate() {
-        List<Room> roomsToSort = new ArrayList<>(getAllFreeRooms());
-        Collections.sort(roomsToSort, new CheckOutDateComparator());
-        return roomsToSort;
+    public List<RoomAssignment> getThreeLastRoomAssigment(Long roomId) {
+        return roomDao.getById(roomId).getRoomAssignments().stream()
+                .sorted(Comparator.comparing(RoomAssignment::getCreatedOn).reversed())
+                .limit(3).collect(Collectors.toList());
     }
 
     @Override
-    public List<RoomAssignment> getThreeLastRoomAssigment(Room room) {
-        List<RoomAssignment> allAssignments = new ArrayList<RoomAssignment>(room.getRoomAssignments());
-        List<RoomAssignment> threeLastRoomAssignments = new ArrayList<>();
-
-        Collections.reverse(allAssignments);
-
-        for (int i = 0; i < 3; i++) {
-            threeLastRoomAssignments.add(allAssignments.get(i));
+    public List<Guest> getThreeLastGuests(Long roomId) {
+        Room roomToGetGuests = roomDao.getById(roomId);
+        if (roomToGetGuests == null) {
+            log.log(Level.SEVERE, "Incorrect input when trying to get three last guests");
+            throw new IllegalArgumentException("Room not found");
+        } else {
+            List<Guest> threeLastGuests = new ArrayList<>();
+            for (RoomAssignment roomAssignment : getThreeLastRoomAssigment(roomToGetGuests.getId())) {
+                threeLastGuests.add(roomAssignment.getGuest());
+            }
+            return threeLastGuests;
         }
-        return threeLastRoomAssignments;
     }
 
-    @Override
-    public List<Guest> threeLastGuests(Room room) {
-        List<Guest> threeLastGuests = new ArrayList<>();
-        for (RoomAssignment roomAssignment : getThreeLastRoomAssigment(room)) {
-            threeLastGuests.add(roomAssignment.getGuest());
-        }
-        return threeLastGuests;
-    }
 
     @Override
-    public List<LocalDate> threeLastGuestsCheckInDates(Room room) {
-        List<LocalDate> threeLastGuestsCheckInDates = new ArrayList<>();
-        for (RoomAssignment roomAssignment : getThreeLastRoomAssigment(room)) {
-            threeLastGuestsCheckInDates.add(roomAssignment.getCheckInDate());
+    public List<String> getThreeLastGuestsCheckInDates(Long roomId) {
+        Room roomToGetGuests = roomDao.getById(roomId);
+        if (roomToGetGuests == null) {
+            log.log(Level.SEVERE, "Incorrect input when trying to get three last dates of staying");
+            throw new IllegalArgumentException("Room not found");
+        } else {
+            List<String> threeLastGuestsCheckInDates = new ArrayList<>();
+            for (RoomAssignment roomAssignment : getThreeLastRoomAssigment(roomToGetGuests.getId())) {
+                threeLastGuestsCheckInDates.add("From: " + roomAssignment.getCheckInDate().toString()
+                        + " To: " + roomAssignment.getCheckOutDate().toString());
+            }
+            return threeLastGuestsCheckInDates;
         }
-        return threeLastGuestsCheckInDates;
     }
 }

@@ -6,9 +6,6 @@ import com.company.model.RoomAssignment;
 import com.company.model.RoomStatus;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 public interface IRoomService {
@@ -18,9 +15,9 @@ public interface IRoomService {
 
     Room getById(Long id);
 
-    void changeRoomStatus(Room room, RoomStatus newRoomStatus);
+    void changeRoomStatus(Long id, RoomStatus newRoomStatus);
 
-    void changeRoomPrice(Room room, Double newRoomPrice);
+    void changeRoomPrice(Long id, Double newRoomPrice);
 
     List<Room> getAllRooms();
 
@@ -42,11 +39,9 @@ public interface IRoomService {
 
     public List<Room> sortFreeRoomsByNumberOfStars();
 
-    public List<Room> sortRoomsByCheckOutDate();
+    public List<RoomAssignment> getThreeLastRoomAssigment(Long roomId);
 
-    public List<RoomAssignment> getThreeLastRoomAssigment(Room room);
+    public List<Guest> getThreeLastGuests(Long roomId);
 
-    public List<Guest> threeLastGuests(Room room);
-
-    public List<LocalDate> threeLastGuestsCheckInDates(Room room);
+    public List<String> getThreeLastGuestsCheckInDates(Long roomId);
 }

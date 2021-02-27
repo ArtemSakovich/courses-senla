@@ -1,6 +1,9 @@
 package com.company.service;
 
 import com.company.api.dao.IGuestDao;
+import com.company.api.dao.IMaintenanceDao;
+import com.company.api.dao.IRoomDao;
+import com.company.api.exceptions.OperationCancelledException;
 import com.company.api.service.IGuestService;
 import com.company.model.*;
 import com.company.util.IdGenerator;
@@ -10,13 +13,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GuestService implements IGuestService {
 
     private final IGuestDao guestDao;
+    private final IRoomDao roomDao;
+    private final IMaintenanceDao maintenanceDao;
+    Logger log = Logger.getLogger(GuestService.class.getName());
 
-    public GuestService(IGuestDao guestDao) {
+    public GuestService(IGuestDao guestDao, IRoomDao roomDao, IMaintenanceDao maintenanceDao) {
         this.guestDao = guestDao;
+        this.roomDao = roomDao;
+        this.maintenanceDao = maintenanceDao;
     }
 
     @Override
@@ -37,45 +47,83 @@ public class GuestService implements IGuestService {
         return guestDao.getById(id);
     }
 
-    @Override
-    public void flipToRoom(Guest guest, Room room, LocalDate checkOutDate) {
-        if (room.getRoomStatus().equals(RoomStatus.FREE)) {
-            RoomAssignment roomAssignment = new RoomAssignment(room, guest, LocalDate.now(), checkOutDate,
+    public void accommodateToRoom(Long guestId, Long roomId, LocalDate checkOutDate) {
+        Guest guestToFlip = guestDao.getById(guestId);
+        Room roomToFlip = roomDao.getById(roomId);
+        if (guestToFlip == null || roomToFlip == null) {
+            log.log(Level.SEVERE, "Incorrect input when trying to accommodate a guest");
+            throw new IllegalArgumentException("Guest or room not found");
+        }
+        if (roomToFlip.getRoomStatus().equals(RoomStatus.FREE)) {
+            RoomAssignment roomAssignment = new RoomAssignment(roomToFlip, guestToFlip, LocalDate.now(), checkOutDate,
                     RoomAssignmentStatus.ACTIVE);
-            if (room.getNumberOfBeds().equals(room.getTenants().size())) {
-                room.setRoomStatus(RoomStatus.OCCUPIED);
+            roomToFlip.setRoomAssignment(roomAssignment);
+            guestToFlip.setRoomAssignment(roomAssignment);
+            if (roomToFlip.getNumberOfBeds().equals(roomToFlip.getTenants().size())) {
+                roomToFlip.setRoomStatus(RoomStatus.OCCUPIED);
             }
         } else {
-            System.out.println("Unfortunately, this room is " +
-                    room.getRoomStatus().toString().toLowerCase(Locale.ROOT));
+            log.log(Level.SEVERE, "Failed to accommodate guest to room");
+            throw new OperationCancelledException("Unfortunately, this room is " +
+                    roomToFlip.getRoomStatus().toString().toLowerCase(Locale.ROOT));
         }
     }
 
     @Override
-    public void evictFromRoom(Guest guest) {
-        for (RoomAssignment roomAssignment : guest.getRoomAssignments()) {
-            if (roomAssignment.getRoomAssignmentStatus().equals(RoomAssignmentStatus.ACTIVE)) {
-                roomAssignment.setRoomAssignmentStatus(RoomAssignmentStatus.CLOSED);
-                System.out.println(guest.getName() + " " + guest.getSurname() +
-                        " has been evict from room №" + roomAssignment.getRoom());
-            } else {
-                System.out.println("Unfortunately, " + guest.getName() + " " +
-                        guest.getSurname() + " currently does not live in any of the rooms");
-            }
+    public void evictFromRoom(Long guestId){
+        Guest guestToEvict = guestDao.getById(guestId);
+        if (guestToEvict == null) {
+            log.log(Level.SEVERE, "Incorrect input when trying to evict guest from room");
+            throw new IllegalArgumentException("Guest not found");
+        } else {
+            guestToEvict.getRoomAssignments().stream()
+                    .filter(a -> RoomAssignmentStatus.ACTIVE.equals(a.getRoomAssignmentStatus()))
+                    .findAny().ifPresentOrElse(roomAssignment -> {
+                        roomAssignment.getRoom().setRoomStatus(RoomStatus.FREE);
+                        roomAssignment.setRoomAssignmentStatus(RoomAssignmentStatus.CLOSED);
+                        roomAssignment.setCheckOutDate(LocalDate.now());
+                    },
+                    () -> {
+                        log.log(Level.SEVERE, "Failed to evict guest from room");
+                        throw new OperationCancelledException("Guest does not live in any of the rooms");
+                    });
         }
     }
 
     @Override
-    public void orderMaintenance(Guest guest, Maintenance maintenance) {
-        if(guest.getActiveRoomAssignments().isEmpty()) {
-            System.out.println("Unfortunately, " + guest.getName() + " " +
-                    guest.getSurname() + " currently currently not a hotel guest");
+    public void orderMaintenance(Long guestId, Long maintenanceId){
+        Guest guestToOrderMaintenance = guestDao.getById(guestId);
+        Maintenance maintenanceToOrder = maintenanceDao.getById(maintenanceId);
+        if (guestToOrderMaintenance == null || maintenanceToOrder == null) {
+            log.log(Level.SEVERE, "Incorrect input when trying to order maintenance");
+            throw new IllegalArgumentException("Guest or maintenance not found");
         } else {
-            for (RoomAssignment roomAssignment : guest.getActiveRoomAssignments()) {
-                maintenance.setOrderDate(LocalDate.now());
-                roomAssignment.setMaintenanceOrderDate(LocalDate.now());
-                roomAssignment.setMaintenance(maintenance);
+            guestToOrderMaintenance.getActiveRoomAssignments().stream()
+                    .findAny().ifPresentOrElse(roomAssignment -> {
+                        maintenanceToOrder.setOrderDate(LocalDate.now());
+                        roomAssignment.setMaintenance(maintenanceToOrder);
+                    },
+                    () -> {
+                        log.log(Level.SEVERE, "Failed to order maintenance");
+                        throw new OperationCancelledException("Guest does not live in the hotel");
+                    });
+        }
+    }
+
+    @Override
+    public Double getAmountOfPaymentForTheRoom(Long guestId) {
+        Guest guestToGetAmount = guestDao.getById(guestId);
+        if (guestToGetAmount == null) {
+            log.log(Level.SEVERE, "Incorrect input when trying to get amount of payment for room");
+            throw new IllegalArgumentException("Guest not found");
+        } else {
+            Double amountOfPaymentForTheRoom = 0.0;
+            if (!guestToGetAmount.getActiveRoomAssignments().isEmpty()) {
+                for (RoomAssignment roomAssignment : guestToGetAmount.getActiveRoomAssignments()) {
+                    amountOfPaymentForTheRoom = roomAssignment.getPricePerStay();
+                }
             }
+            return amountOfPaymentForTheRoom;
         }
     }
 
@@ -86,7 +134,13 @@ public class GuestService implements IGuestService {
 
     @Override
     public Integer getNumberOfGuests() {
-        return getAllGuests().size();
+        int totalNumberOfGuest = 0;
+        for (Guest guest : getAllGuests()) {
+            if(!guest.getActiveRoomAssignments().isEmpty()) {
+                totalNumberOfGuest++;
+            }
+        }
+        return totalNumberOfGuest;
     }
 
     @Override

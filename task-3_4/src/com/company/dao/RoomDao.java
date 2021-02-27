@@ -1,12 +1,7 @@
 package com.company.dao;
 
-import com.company.api.dao.IGenericDao;
 import com.company.api.dao.IRoomDao;
-import com.company.model.Guest;
 import com.company.model.Room;
-import com.company.model.RoomStatus;
-
-import java.util.*;
 
 public class RoomDao extends AbstractDao<Room> implements IRoomDao {
     @Override

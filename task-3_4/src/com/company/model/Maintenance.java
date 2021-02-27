@@ -1,9 +1,6 @@
 package com.company.model;
 
-import com.company.util.IdGenerator;
-
 import java.time.LocalDate;
-import java.util.Calendar;
 
 public class Maintenance extends AEntity {
 
@@ -38,6 +35,10 @@ public class Maintenance extends AEntity {
 
     public MaintenanceSection getMaintenanceSection() {
         return maintenanceSection;
+    }
+
+    public String getMaintenanceSectionAsString() {
+        return maintenanceSection.toString();
     }
 
     public void setMaintenanceSection(MaintenanceSection maintenanceSection) {

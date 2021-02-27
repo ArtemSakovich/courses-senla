@@ -1,8 +1,5 @@
 package com.company.model;
 
-import com.company.util.IdGenerator;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +11,7 @@ public class Room extends AEntity implements Comparable<Room> {
     private Integer numberOfBeds;
     private Integer numberOfStars;
     private Long id;
-    private List<RoomAssignment> roomAssignments;
+    private List<RoomAssignment> roomAssignments = new ArrayList<>();
 
     public Room(Integer roomNumber, Double roomPrice, Integer numberOfBeds, Integer numberOfStars) {
         this.roomNumber = roomNumber;
@@ -67,7 +64,11 @@ public class Room extends AEntity implements Comparable<Room> {
     }
 
     public List<RoomAssignment> getRoomAssignments() {
-        return roomAssignments;
+        return new ArrayList<>(roomAssignments);
+    }
+
+    public void setRoomAssignment(RoomAssignment roomAssignment) {
+        roomAssignments.add(roomAssignment);
     }
 
     public List<RoomAssignment> getActiveRoomAssignments() {
@@ -127,8 +128,9 @@ public class Room extends AEntity implements Comparable<Room> {
 
     @Override
     public String toString() {
-        return "Room #" + getId() + ". Room number: " + roomNumber + ". Number of stars: "
-                + numberOfStars + ". Number of beds: " + numberOfBeds +
-                ". Price: " + roomPrice + ". Status: " + roomStatus.toString();
+        return "Room #" + getId() + "; Room number: " + roomNumber + "; Number of stars: "
+                + numberOfStars + "; Number of beds: " + numberOfBeds +
+                "; Price: " + roomPrice + "; Status: " + roomStatus.toString() +
+                "; Number of tenants: " + getTenants().size();
     }
 }

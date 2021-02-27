@@ -1,23 +1,29 @@
 package com.company.service;
 
+import com.company.api.dao.IGuestDao;
 import com.company.api.dao.IMaintenanceDao;
+import com.company.api.exceptions.OperationCancelledException;
 import com.company.api.service.IMaintenanceService;
 import com.company.model.*;
 import com.company.util.IdGenerator;
-import com.company.util.comparators.maintenanceComparators.MaintenanceOrderDateComparator;
-import com.company.util.comparators.maintenanceComparators.MaintenancePriceComparator;
-import com.company.util.comparators.maintenanceComparators.MaintenanceSectionComparator;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class MaintenanceService implements IMaintenanceService {
 
     private final IMaintenanceDao maintenanceDao;
+    private final IGuestDao guestDao;
+    Logger log = Logger.getLogger(Maintenance.class.getName());
 
-    public MaintenanceService(IMaintenanceDao maintenanceDao) {
+    public MaintenanceService(IMaintenanceDao maintenanceDao, IGuestDao guestDao) {
         this.maintenanceDao = maintenanceDao;
+        this.guestDao = guestDao;
     }
 
     @Override
@@ -39,8 +45,14 @@ public class MaintenanceService implements IMaintenanceService {
     }
 
     @Override
-    public void changeMaintenancePrice(Maintenance maintenance, Double newPrice) {
-        maintenance.setMaintenancePrice(newPrice);
+    public void changeMaintenancePrice(Long id, Double newPrice) {
+        Maintenance maintenanceToChangePrice = maintenanceDao.getById(id);
+        if (maintenanceToChangePrice == null) {
+            log.log(Level.SEVERE, "Incorrect input when trying to change maintenance price");
+            throw new IllegalArgumentException("Maintenance not found!");
+        } else {
+            maintenanceToChangePrice.setMaintenancePrice(newPrice);
+        }
     }
 
     @Override
@@ -51,60 +63,31 @@ public class MaintenanceService implements IMaintenanceService {
     @Override
     public List<Maintenance> sortAllMaintenancesByPrice() {
         List<Maintenance> maintenancesToSort = new ArrayList<>(getAllMaintenances());
-        Collections.sort(maintenancesToSort, new MaintenancePriceComparator());
+        maintenancesToSort.sort(Comparator.comparingDouble(Maintenance::getMaintenancePrice));
         return maintenancesToSort;
     }
 
     @Override
     public List<Maintenance> sortAllMaintenancesBySectionABC() {
         List<Maintenance> maintenancesToSort = new ArrayList<>(getAllMaintenances());
-        Collections.sort(maintenancesToSort, new MaintenanceSectionComparator());
+        maintenancesToSort.sort(Comparator.comparing(Maintenance::getMaintenanceSectionAsString));
         return maintenancesToSort;
     }
 
     @Override
-    public List<Maintenance> sortMaintenancesOfCertainGuestByPrice(Guest guest) {
-        if (guest.getActiveRoomAssignments().isEmpty()) {
-            System.out.println("Unfortunately, " + guest.getName() + " " +
-                    guest.getSurname() + " currently currently not a hotel guest");
-            return null;
+    public List<Maintenance> sortMaintenancesOfCertainGuestByPrice(Long guestId) {
+        Guest guestToViewSortedMaintenances = guestDao.getById(guestId);
+        if (guestToViewSortedMaintenances == null) {
+            log.log(Level.SEVERE, "Incorrect input when trying view sorted by price maintenances of certain guest");
+            throw new IllegalArgumentException("Guest not found");
         } else {
             List<Maintenance> maintenancesToSort = new ArrayList<>();
-            for (RoomAssignment roomAssignment : guest.getActiveRoomAssignments()) {
-                if (roomAssignment.getMaintenances().isEmpty()) {
-                    System.out.println("Unfortunately, " + guest.getName() + " " +
-                            guest.getSurname() + " did not order any maintenances");
-                    return null;
-                } else {
-                    maintenancesToSort.addAll(roomAssignment.getMaintenances());
-                    Collections.sort(maintenancesToSort, new MaintenancePriceComparator());
-                    return maintenancesToSort;
-                }
+            for (RoomAssignment roomAssignment : guestToViewSortedMaintenances.getActiveRoomAssignments()) {
+                maintenancesToSort.addAll(roomAssignment.getMaintenances());
             }
-        }
-        return null;
-    }
-
-        @Override
-        public List<Maintenance> sortMaintenancesOfCertainGuestByOrderDate (Guest guest){
-            if (guest.getActiveRoomAssignments().isEmpty()) {
-                System.out.println("Unfortunately, " + guest.getName() + " " +
-                        guest.getSurname() + " currently currently not a hotel guest");
-                return null;
-            } else {
-                List<Maintenance> maintenancesToSort = new ArrayList<>();
-                for (RoomAssignment roomAssignment : guest.getActiveRoomAssignments()) {
-                    if (roomAssignment.getMaintenances().isEmpty()) {
-                        System.out.println("Unfortunately, " + guest.getName() + " " +
-                                guest.getSurname() + " did not order any maintenances");
-                        return null;
-                    } else {
-                        maintenancesToSort.addAll(roomAssignment.getMaintenances());
-                        Collections.sort(maintenancesToSort, new MaintenanceOrderDateComparator());
-                        return maintenancesToSort;
-                    }
-                }
-            }
-            return null;
+            return maintenancesToSort.stream()
+                    .sorted(Comparator.comparing(Maintenance::getMaintenancePrice))
+                    .collect(Collectors.toList());
         }
     }
+}
