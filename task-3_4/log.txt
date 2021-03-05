@@ -1,4 +1,2 @@
-Feb 26, 2021 11:38:54 AM com.company.service.GuestService orderMaintenance
-SEVERE: Incorrect input when trying to order maintenance
-Feb 26, 2021 11:39:33 AM com.company.service.RoomAssignmentService sortMaintenancesByOrderDate
-SEVERE: Incorrect input when trying to sort maintenances by date of order
+Mar 04, 2021 7:27:56 PM com.company.service.RoomService <init>
+SEVERE: Property file not found

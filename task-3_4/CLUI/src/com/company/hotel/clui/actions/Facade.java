@@ -1,25 +1,16 @@
 package com.company.hotel.clui.actions;
 
-import com.company.api.dao.IGuestDao;
-import com.company.api.dao.IMaintenanceDao;
-import com.company.api.dao.IRoomAssignmentDao;
-import com.company.api.dao.IRoomDao;
-import com.company.api.exceptions.OperationCancelledException;
 import com.company.api.service.IGuestService;
 import com.company.api.service.IMaintenanceService;
 import com.company.api.service.IRoomAssignmentService;
 import com.company.api.service.IRoomService;
-import com.company.dao.GuestDao;
-import com.company.dao.MaintenanceDao;
-import com.company.dao.RoomAssignmentDao;
-import com.company.dao.RoomDao;
 import com.company.model.*;
 import com.company.service.GuestService;
 import com.company.service.MaintenanceService;
 import com.company.service.RoomAssignmentService;
 import com.company.service.RoomService;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Facade {
     private static IGuestService guestService;
@@ -33,14 +24,10 @@ public class Facade {
     private static Facade instance;
 
     private Facade() {
-        IGuestDao guestDao = new GuestDao();
-        IRoomDao roomDao = new RoomDao();
-        IMaintenanceDao maintenanceDao = new MaintenanceDao();
-        IRoomAssignmentDao roomAssignmentDao = new RoomAssignmentDao();
-        guestService = new GuestService(guestDao, roomDao, maintenanceDao);
-        roomService = new RoomService(roomDao);
-        maintenanceService = new MaintenanceService(maintenanceDao, guestDao);
-        roomAssignmentService = new RoomAssignmentService(roomAssignmentDao, guestDao);
+        guestService = GuestService.getInstance();
+        roomService = RoomService.getInstance();
+        maintenanceService = MaintenanceService.getInstance();
+        roomAssignmentService = RoomAssignmentService.getInstance();
     }
 
     public static Facade getInstance() {
@@ -54,10 +41,13 @@ public class Facade {
         Guest artem = guestService.addGuest("zArtem", "Sakovich", 19);
         Guest artem1 = guestService.addGuest("Artemc", "Sakovich", 12);
         Guest artem2 = guestService.addGuest("bArtem", "Sakovich", 16);
+        Guest artem3 = guestService.addGuest("bArtgsem", "Sakeovich", 16);
+        Guest artem4 = guestService.addGuest("bArtffem", "Sakaovich", 16);
 
         Room room1 = roomService.addRoom(11, 112.8, 8, 4);
         Room room2 = roomService.addRoom(33, 14.2, 3, 1);
         Room room3 = roomService.addRoom(36, 6.5, 1, 5);
+
 
         Maintenance maintenance1 = maintenanceService.addMaintenance("Cleaning", 123.12, MaintenanceSection.CLEANING);
         Maintenance maintenance2 = maintenanceService.addMaintenance("Cooking", 12.12, MaintenanceSection.FOOD);
@@ -80,7 +70,7 @@ public class Facade {
         guestService.evictFromRoom(guestId);
     }
 
-    public void accommodateToRoom(Long guestId, Long roomId, LocalDate checkOutDate) {
+    public void accommodateToRoom(Long guestId, Long roomId, LocalDateTime checkOutDate) {
         guestService.accommodateToRoom(guestId, roomId, checkOutDate);
     }
 
@@ -152,7 +142,7 @@ public class Facade {
         System.out.println(guestService.getNumberOfGuests());
     }
 
-    public void getFreeRoomsByDate(LocalDate dateToCheck) {
+    public void getFreeRoomsByDate(LocalDateTime dateToCheck) {
         roomService.getFreeRoomsByDate(dateToCheck).forEach(System.out::println);
     }
 

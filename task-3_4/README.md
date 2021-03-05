@@ -18,9 +18,4 @@
 - List of services provided by the guest, and their prices (sort by price, by date)  
 - Prices of services and rooms (sort by section, price)  
 - Individual room details
-#### Requirements for the task:  ####
-- The program must NOT implement the console user interface  
-- Check the program's performance from the test class with the main method
-- The class diagram must be created for the program  
-- The program must comply with the principles of the "High cohesion" and "Low Coupling" 
-- To display the work results, use System.out("message")
+

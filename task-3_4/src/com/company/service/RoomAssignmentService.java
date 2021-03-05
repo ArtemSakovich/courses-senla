@@ -4,6 +4,8 @@ import com.company.api.dao.IGuestDao;
 import com.company.api.dao.IRoomAssignmentDao;
 import com.company.api.exceptions.OperationCancelledException;
 import com.company.api.service.IRoomAssignmentService;
+import com.company.dao.GuestDao;
+import com.company.dao.RoomAssignmentDao;
 import com.company.model.*;
 
 import java.util.ArrayList;
@@ -15,13 +17,21 @@ import java.util.stream.Collectors;
 
 public class RoomAssignmentService implements IRoomAssignmentService {
 
+    private static IRoomAssignmentService instance;
     private final IRoomAssignmentDao roomAssignmentDao;
     private final IGuestDao guestDao;
     Logger log = Logger.getLogger(RoomAssignmentService.class.getName());
 
-    public RoomAssignmentService(IRoomAssignmentDao roomAssignmentDao, IGuestDao guestDao) {
-        this.roomAssignmentDao = roomAssignmentDao;
-        this.guestDao = guestDao;
+    private RoomAssignmentService() {
+        this.roomAssignmentDao = RoomAssignmentDao.getInstance();
+        this.guestDao = GuestDao.getInstance();
+    }
+
+    public static IRoomAssignmentService getInstance() {
+        if (instance == null) {
+            instance = new RoomAssignmentService();
+        }
+        return instance;
     }
 
     @Override

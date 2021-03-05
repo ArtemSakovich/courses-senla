@@ -4,6 +4,7 @@ import com.company.hotel.clui.actions.Facade;
 import com.company.hotel.clui.actions.IAction;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class FlipToRoom implements IAction {
@@ -16,7 +17,7 @@ public class FlipToRoom implements IAction {
             Long roomId = Long.parseLong(input.nextLine());
             System.out.print("Please enter number of days of stay: ");
             Long days = Long.parseLong(input.nextLine());
-            Facade.getInstance().accommodateToRoom(guestId, roomId, LocalDate.now().plusDays(days));
+            Facade.getInstance().accommodateToRoom(guestId, roomId, LocalDateTime.now().plusDays(days));
             System.out.println("Guest has been accommodated to room");
     }
 }

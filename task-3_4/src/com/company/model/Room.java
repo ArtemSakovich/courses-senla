@@ -1,7 +1,14 @@
 package com.company.model;
 
+import com.company.service.RoomService;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Room extends AEntity implements Comparable<Room> {
 

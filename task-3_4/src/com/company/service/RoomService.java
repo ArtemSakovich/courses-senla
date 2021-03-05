@@ -2,24 +2,43 @@ package com.company.service;
 
 import com.company.api.dao.IRoomDao;
 import com.company.api.service.IRoomService;
+import com.company.dao.RoomDao;
 import com.company.model.*;
 import com.company.util.IdGenerator;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class RoomService implements IRoomService {
+    private static IRoomService instance;
     private final IRoomDao roomDao;
+    private boolean isRoomStatusChangeable;
+    private Integer allowedNumberOfNotes = 3;
     Logger log = Logger.getLogger(RoomService.class.getName());
 
-    public RoomService(IRoomDao roomDao) {
-        this.roomDao = roomDao;
+    private RoomService() {
+        this.roomDao = RoomDao.getInstance();
+        try (FileInputStream input = new FileInputStream("hotelAdministrator.properties")) {
+            Properties properties = new Properties();
+            properties.load(input);
+            this.isRoomStatusChangeable = Boolean.parseBoolean(properties.getProperty("abilityToChangeRoomStatus",
+                    "false"));
+            this.allowedNumberOfNotes = Integer.parseInt(properties.getProperty("amountOfNotes"));
+        } catch (IOException e) {
+            log.log(Level.SEVERE, "Property file not found");
+        }
+    }
+
+    public static IRoomService getInstance() {
+        if (instance == null) {
+            instance = new RoomService();
+        }
+        return instance;
     }
 
     @Override
@@ -43,12 +62,17 @@ public class RoomService implements IRoomService {
 
     @Override
     public void changeRoomStatus(Long id, RoomStatus newRoomStatus) {
-        Room roomToChangeStatus = roomDao.getById(id);
-        if (roomToChangeStatus == null) {
-            log.log(Level.SEVERE, "Incorrect input when trying to change room status");
-            throw new IllegalArgumentException("Room not found!");
+        if (isRoomStatusChangeable) {
+            Room roomToChangeStatus = roomDao.getById(id);
+            if (roomToChangeStatus == null) {
+                log.log(Level.SEVERE, "Incorrect input when trying to change room status");
+                throw new IllegalArgumentException("Room not found!");
+            } else {
+                roomToChangeStatus.setRoomStatus(newRoomStatus);
+            }
         } else {
-            roomToChangeStatus.setRoomStatus(newRoomStatus);
+            log.log(Level.SEVERE, "Error when trying to change room status");
+            throw new IllegalArgumentException("This function is not available at the moment");
         }
     }
 
@@ -81,7 +105,7 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public List<Room> getFreeRoomsByDate(LocalDate requiredDate) {
+    public List<Room> getFreeRoomsByDate(LocalDateTime requiredDate) {
         List<Room> freeRooms = new ArrayList<>();
         for (Room room : getAllRooms()) {
             if (room.getRoomAssignments().isEmpty()) {
@@ -143,7 +167,7 @@ public class RoomService implements IRoomService {
     public List<RoomAssignment> getThreeLastRoomAssigment(Long roomId) {
         return roomDao.getById(roomId).getRoomAssignments().stream()
                 .sorted(Comparator.comparing(RoomAssignment::getCreatedOn).reversed())
-                .limit(3).collect(Collectors.toList());
+                .limit(allowedNumberOfNotes).collect(Collectors.toList());
     }
 
     @Override
@@ -171,8 +195,8 @@ public class RoomService implements IRoomService {
         } else {
             List<String> threeLastGuestsCheckInDates = new ArrayList<>();
             for (RoomAssignment roomAssignment : getThreeLastRoomAssigment(roomToGetGuests.getId())) {
-                threeLastGuestsCheckInDates.add("From: " + roomAssignment.getCheckInDate().toString()
-                        + " To: " + roomAssignment.getCheckOutDate().toString());
+                threeLastGuestsCheckInDates.add("From: " + roomAssignment.getCheckInDate().toLocalDate()
+                        + " To: " + roomAssignment.getCheckOutDate().toLocalDate());
             }
             return threeLastGuestsCheckInDates;
         }

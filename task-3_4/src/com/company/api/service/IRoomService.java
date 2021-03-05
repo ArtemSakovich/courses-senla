@@ -5,7 +5,7 @@ import com.company.model.Room;
 import com.company.model.RoomAssignment;
 import com.company.model.RoomStatus;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IRoomService {
@@ -25,23 +25,23 @@ public interface IRoomService {
 
     Integer getNumberOfFreeRooms();
 
-    List<Room> getFreeRoomsByDate(LocalDate requiredDate);
+    List<Room> getFreeRoomsByDate(LocalDateTime requiredDate);
 
-    public List<Room> sortRoomsByPrice();
+    List<Room> sortRoomsByPrice();
 
-    public List<Room> sortRoomsByNumberOfBeds();
+    List<Room> sortRoomsByNumberOfBeds();
 
-    public List<Room> sortRoomsByNumberOfStars();
+    List<Room> sortRoomsByNumberOfStars();
 
-    public List<Room> sortFreeRoomsByPrice();
+    List<Room> sortFreeRoomsByPrice();
 
-    public List<Room> sortFreeRoomsByNumberOfBeds();
+    List<Room> sortFreeRoomsByNumberOfBeds();
 
-    public List<Room> sortFreeRoomsByNumberOfStars();
+    List<Room> sortFreeRoomsByNumberOfStars();
 
-    public List<RoomAssignment> getThreeLastRoomAssigment(Long roomId);
+    List<RoomAssignment> getThreeLastRoomAssigment(Long roomId);
 
-    public List<Guest> getThreeLastGuests(Long roomId);
+    List<Guest> getThreeLastGuests(Long roomId);
 
-    public List<String> getThreeLastGuestsCheckInDates(Long roomId);
+    List<String> getThreeLastGuestsCheckInDates(Long roomId);
 }

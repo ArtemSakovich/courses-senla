@@ -1,6 +1,6 @@
 package com.company.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,20 +11,34 @@ public class RoomAssignment extends AEntity {
     private Long id;
     private Room room;
     private Guest guest;
-    private LocalDate checkInDate;
-    private LocalDate checkOutDate;
+    private LocalDateTime checkInDate;
+    private LocalDateTime checkOutDate;
     private RoomAssignmentStatus roomAssignmentStatus;
-    private LocalDate createdOn;
-    private List<Maintenance> maintenances = new ArrayList<Maintenance>();
+    private LocalDateTime createdOn;
+    private List<Maintenance> maintenances = new ArrayList<>();
 
-    public RoomAssignment(Room room, Guest guest, LocalDate checkInDate, LocalDate checkOutDate,
+    public RoomAssignment(Room room, Guest guest, LocalDateTime checkInDate, LocalDateTime checkOutDate,
                           RoomAssignmentStatus roomAssignmentStatus) {
         this.room = room;
         this.guest = guest;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
-        this.createdOn = LocalDate.now();
+        this.createdOn = LocalDateTime.now();
         this.roomAssignmentStatus = roomAssignmentStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "RoomAssignment{" +
+                "id=" + id +
+                ", room=" + room +
+                ", guest=" + guest +
+                ", checkInDate=" + checkInDate +
+                ", checkOutDate=" + checkOutDate +
+                ", roomAssignmentStatus=" + roomAssignmentStatus +
+                ", createdOn=" + createdOn +
+                ", maintenances=" + maintenances +
+                '}';
     }
 
     public Room getRoom() {
@@ -47,19 +61,19 @@ public class RoomAssignment extends AEntity {
         this.guest = guest;
     }
 
-    public LocalDate getCheckInDate() {
+    public LocalDateTime getCheckInDate() {
         return checkInDate;
     }
 
-    public void setCheckInDate(LocalDate checkInDate) {
+    public void setCheckInDate(LocalDateTime checkInDate) {
         this.checkInDate = checkInDate;
     }
 
-    public LocalDate getCheckOutDate() {
+    public LocalDateTime getCheckOutDate() {
         return checkOutDate;
     }
 
-    public void setCheckOutDate(LocalDate checkOutDate) {
+    public void setCheckOutDate(LocalDateTime checkOutDate) {
         this.checkOutDate = checkOutDate;
     }
 
@@ -71,11 +85,11 @@ public class RoomAssignment extends AEntity {
         this.roomAssignmentStatus = roomAssignmentStatus;
     }
 
-    public LocalDate getCreatedOn() {
+    public LocalDateTime getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(LocalDate createdOn) {
+    public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
     }
 

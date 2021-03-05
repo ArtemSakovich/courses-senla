@@ -1,6 +1,7 @@
 package com.company.dao;
 
 import com.company.api.dao.IGenericDao;
+import com.company.api.dao.IRoomDao;
 import com.company.model.AEntity;
 
 import java.util.ArrayList;

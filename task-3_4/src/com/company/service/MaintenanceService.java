@@ -2,12 +2,12 @@ package com.company.service;
 
 import com.company.api.dao.IGuestDao;
 import com.company.api.dao.IMaintenanceDao;
-import com.company.api.exceptions.OperationCancelledException;
 import com.company.api.service.IMaintenanceService;
+import com.company.dao.GuestDao;
+import com.company.dao.MaintenanceDao;
 import com.company.model.*;
 import com.company.util.IdGenerator;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -17,13 +17,21 @@ import java.util.stream.Collectors;
 
 public class MaintenanceService implements IMaintenanceService {
 
+    private static IMaintenanceService instance;
     private final IMaintenanceDao maintenanceDao;
     private final IGuestDao guestDao;
     Logger log = Logger.getLogger(Maintenance.class.getName());
 
-    public MaintenanceService(IMaintenanceDao maintenanceDao, IGuestDao guestDao) {
-        this.maintenanceDao = maintenanceDao;
-        this.guestDao = guestDao;
+    private MaintenanceService() {
+        this.maintenanceDao = MaintenanceDao.getInstance();
+        this.guestDao = GuestDao.getInstance();
+    }
+
+    public static IMaintenanceService getInstance() {
+        if (instance == null) {
+            instance = new MaintenanceService();
+        }
+        return instance;
     }
 
     @Override

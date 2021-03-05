@@ -5,10 +5,14 @@ import com.company.api.dao.IMaintenanceDao;
 import com.company.api.dao.IRoomDao;
 import com.company.api.exceptions.OperationCancelledException;
 import com.company.api.service.IGuestService;
+import com.company.dao.GuestDao;
+import com.company.dao.MaintenanceDao;
+import com.company.dao.RoomDao;
 import com.company.model.*;
 import com.company.util.IdGenerator;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,15 +22,23 @@ import java.util.logging.Logger;
 
 public class GuestService implements IGuestService {
 
+    private static IGuestService instance;
     private final IGuestDao guestDao;
     private final IRoomDao roomDao;
     private final IMaintenanceDao maintenanceDao;
     Logger log = Logger.getLogger(GuestService.class.getName());
 
-    public GuestService(IGuestDao guestDao, IRoomDao roomDao, IMaintenanceDao maintenanceDao) {
-        this.guestDao = guestDao;
-        this.roomDao = roomDao;
-        this.maintenanceDao = maintenanceDao;
+    private GuestService() {
+        this.guestDao = GuestDao.getInstance();
+        this.roomDao = RoomDao.getInstance();
+        this.maintenanceDao = MaintenanceDao.getInstance();
+    }
+
+    public static IGuestService getInstance() {
+        if (instance == null) {
+            instance = new GuestService();
+        }
+        return instance;
     }
 
     @Override
@@ -47,7 +59,7 @@ public class GuestService implements IGuestService {
         return guestDao.getById(id);
     }
 
-    public void accommodateToRoom(Long guestId, Long roomId, LocalDate checkOutDate) {
+    public void accommodateToRoom(Long guestId, Long roomId, LocalDateTime checkOutDate) {
         Guest guestToFlip = guestDao.getById(guestId);
         Room roomToFlip = roomDao.getById(roomId);
         if (guestToFlip == null || roomToFlip == null) {
@@ -55,7 +67,7 @@ public class GuestService implements IGuestService {
             throw new IllegalArgumentException("Guest or room not found");
         }
         if (roomToFlip.getRoomStatus().equals(RoomStatus.FREE)) {
-            RoomAssignment roomAssignment = new RoomAssignment(roomToFlip, guestToFlip, LocalDate.now(), checkOutDate,
+            RoomAssignment roomAssignment = new RoomAssignment(roomToFlip, guestToFlip, LocalDateTime.now(), checkOutDate,
                     RoomAssignmentStatus.ACTIVE);
             roomToFlip.setRoomAssignment(roomAssignment);
             guestToFlip.setRoomAssignment(roomAssignment);
@@ -81,7 +93,7 @@ public class GuestService implements IGuestService {
                     .findAny().ifPresentOrElse(roomAssignment -> {
                         roomAssignment.getRoom().setRoomStatus(RoomStatus.FREE);
                         roomAssignment.setRoomAssignmentStatus(RoomAssignmentStatus.CLOSED);
-                        roomAssignment.setCheckOutDate(LocalDate.now());
+                        roomAssignment.setCheckOutDate(LocalDateTime.now());
                     },
                     () -> {
                         log.log(Level.SEVERE, "Failed to evict guest from room");
