@@ -1,7 +1,6 @@
 package com.company.dao;
 
 import com.company.api.dao.IRoomDao;
-import com.company.hotel.clui.menu.Builder;
 import com.company.model.Room;
 
 public class RoomDao extends AbstractDao<Room> implements IRoomDao {

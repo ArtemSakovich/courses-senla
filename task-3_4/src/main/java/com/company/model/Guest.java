@@ -8,8 +8,7 @@ public class Guest extends AEntity implements Comparable<Guest> {
     private String name;
     private String surname;
     private Integer age;
-    private Long id;
-    private List<RoomAssignment> roomAssignments = new ArrayList<>();
+    private transient List<RoomAssignment> roomAssignments;
 
     public Guest(String name, String surname, Integer age) {
         this.name = name;
@@ -42,11 +41,14 @@ public class Guest extends AEntity implements Comparable<Guest> {
     }
 
     public List<RoomAssignment> getRoomAssignments() {
+        if (roomAssignments == null) {
+            roomAssignments = new ArrayList<>();
+        }
         return roomAssignments;
     }
 
     public void setRoomAssignment(RoomAssignment roomAssignment) {
-        roomAssignments.add(roomAssignment);
+        getRoomAssignments().add(roomAssignment);
     }
 
     public List<RoomAssignment> getActiveRoomAssignments() {
@@ -92,7 +94,7 @@ public class Guest extends AEntity implements Comparable<Guest> {
 
     @Override
     public String toString() {
-        return "Guest #" + getId() + ". Name: " + name +
-                " " + surname + ". Age: " + age;
+        return "Guest #" + getId() + "; Name: " + name +
+                " " + surname + "; Age: " + age;
     }
 }

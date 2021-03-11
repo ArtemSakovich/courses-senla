@@ -1,8 +1,6 @@
 package com.company.dao;
 
 import com.company.api.dao.IGuestDao;
-import com.company.api.dao.IRoomAssignmentDao;
-import com.company.api.dao.IRoomDao;
 import com.company.model.Guest;
 
 public class GuestDao extends AbstractDao<Guest> implements IGuestDao {

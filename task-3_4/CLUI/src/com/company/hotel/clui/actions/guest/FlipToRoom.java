@@ -1,9 +1,8 @@
 package com.company.hotel.clui.actions.guest;
 
-import com.company.hotel.clui.actions.Facade;
-import com.company.hotel.clui.actions.IAction;
+import com.company.hotel.clui.facade.Facade;
+import com.company.hotel.clui.api.IAction;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 

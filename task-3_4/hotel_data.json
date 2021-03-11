@@ -1,0 +1,81 @@
+{
+  "allGuests": [
+    {
+      "name": "zArtem",
+      "surname": "Sakovich",
+      "age": 19,
+      "id": 1
+    },
+    {
+      "name": "Artemc",
+      "surname": "Sakovich",
+      "age": 12,
+      "id": 2
+    },
+    {
+      "name": "bArtem",
+      "surname": "Sakovich",
+      "age": 16,
+      "id": 3
+    },
+    {
+      "name": "bArtgsem",
+      "surname": "Sakeovich",
+      "age": 16,
+      "id": 4
+    },
+    {
+      "name": "bArtffem",
+      "surname": "Sakaovich",
+      "age": 16,
+      "id": 5
+    }
+  ],
+  "allMaintenances": [
+    {
+      "maintenanceName": "Cleaning",
+      "maintenancePrice": 123.12,
+      "maintenanceSection": "CLEANING",
+      "id": 1
+    },
+    {
+      "maintenanceName": "Cooking",
+      "maintenancePrice": 12.12,
+      "maintenanceSection": "FOOD",
+      "id": 2
+    },
+    {
+      "maintenanceName": "Treatment",
+      "maintenancePrice": 1223.12,
+      "maintenanceSection": "MEDICAL",
+      "id": 3
+    }
+  ],
+  "allRooms": [
+    {
+      "roomNumber": 11,
+      "roomStatus": "FREE",
+      "roomPrice": 112.8,
+      "numberOfBeds": 8,
+      "numberOfStars": 4,
+      "id": 1
+    },
+    {
+      "roomNumber": 33,
+      "roomStatus": "FREE",
+      "roomPrice": 14.2,
+      "numberOfBeds": 3,
+      "numberOfStars": 1,
+      "id": 2
+    },
+    {
+      "roomNumber": 36,
+      "roomStatus": "FREE",
+      "roomPrice": 6.5,
+      "numberOfBeds": 1,
+      "numberOfStars": 5,
+      "id": 3
+    }
+  ],
+  "allRoomAssignments": []
+}

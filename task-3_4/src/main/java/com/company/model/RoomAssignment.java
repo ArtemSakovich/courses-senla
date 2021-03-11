@@ -3,12 +3,11 @@ package com.company.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
 public class RoomAssignment extends AEntity {
-
-    private Long id;
     private Room room;
     private Guest guest;
     private LocalDateTime checkInDate;
@@ -25,20 +24,6 @@ public class RoomAssignment extends AEntity {
         this.checkOutDate = checkOutDate;
         this.createdOn = LocalDateTime.now();
         this.roomAssignmentStatus = roomAssignmentStatus;
-    }
-
-    @Override
-    public String toString() {
-        return "RoomAssignment{" +
-                "id=" + id +
-                ", room=" + room +
-                ", guest=" + guest +
-                ", checkInDate=" + checkInDate +
-                ", checkOutDate=" + checkOutDate +
-                ", roomAssignmentStatus=" + roomAssignmentStatus +
-                ", createdOn=" + createdOn +
-                ", maintenances=" + maintenances +
-                '}';
     }
 
     public Room getRoom() {
@@ -112,5 +97,26 @@ public class RoomAssignment extends AEntity {
             totalMaintenancePrice += maintenance.getMaintenancePrice();
         }
         return room.getRoomPrice() * DAYS.between(checkInDate, checkOutDate) + totalMaintenancePrice;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RoomAssignment that = (RoomAssignment) o;
+        return Objects.equals(room, that.room) && Objects.equals(guest, that.guest) && Objects.equals(checkInDate, that.checkInDate) && Objects.equals(checkOutDate, that.checkOutDate) && roomAssignmentStatus == that.roomAssignmentStatus && Objects.equals(createdOn, that.createdOn) && Objects.equals(maintenances, that.maintenances);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(room, guest, checkInDate, checkOutDate, roomAssignmentStatus, createdOn, maintenances);
+    }
+
+    @Override
+    public String toString() {
+        return "Assignment #" + getId() + "; Guest: " + guest.getName() +
+                " " + guest.getSurname() + "; Room: " + room.getRoomNumber() +
+                "; Validity: " + getCheckInDate().toLocalDate() + " - " + getCheckOutDate().toLocalDate() +
+                "; Status: " + getRoomAssignmentStatus().toString();
     }
 }

@@ -1,4 +1,4 @@
-package com.company.hotel.clui.actions;
+package com.company.hotel.clui.facade;
 
 import com.company.api.service.IGuestService;
 import com.company.api.service.IMaintenanceService;

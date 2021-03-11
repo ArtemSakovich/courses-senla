@@ -1,9 +1,13 @@
 package com.company.hotel.clui.menu;
 
-import com.company.hotel.clui.actions.Facade;
-import com.company.hotel.clui.actions.guest.*;
+import com.company.hotel.clui.actions.guest.AddGuest;
+import com.company.hotel.clui.actions.guest.EvictFromRoom;
+import com.company.hotel.clui.actions.guest.FlipToRoom;
+import com.company.hotel.clui.actions.guest.GetAmountPerStay;
 import com.company.hotel.clui.actions.maintenance.*;
 import com.company.hotel.clui.actions.room.*;
+import com.company.hotel.clui.facade.Facade;
+import com.company.service.SerializeService;
 
 public class Builder {
 
@@ -23,9 +27,11 @@ public class Builder {
 
     public void buildMenu() {
         rootMenu = new Menu();
+        rootMenu.addMenuItem(new MenuItem("Download data", () -> SerializeService.getInstance().deserialize(), rootMenu));
         rootMenu.addMenuItem(new MenuItem("Guest Menu", () -> { }, createGuestMenu()));
         rootMenu.addMenuItem(new MenuItem("Room Menu", () -> { }, createRoomMenu()));
         rootMenu.addMenuItem(new MenuItem("Maintenance Menu", () -> { }, createMaintenanceMenu()));
+        rootMenu.addMenuItem(new MenuItem("Save data", () -> SerializeService.getInstance().serialize() , rootMenu));
         rootMenu.addMenuItem(new MenuItem("Exit", () -> {
             System.exit(0);
         }, null));

@@ -44,7 +44,7 @@ public class RoomService implements IRoomService {
     @Override
     public Room addRoom(Integer roomNumber, Double roomPrice, Integer numberOfBeds, Integer numberOfStars) {
         Room room = new Room(roomNumber, roomPrice, numberOfBeds, numberOfStars);
-        room.setId(IdGenerator.generateRoomId());
+        room.setId(IdGenerator.getInstance().generateRoomId());
         room.setRoomStatus(RoomStatus.FREE);
         roomDao.save(room);
         return room;
