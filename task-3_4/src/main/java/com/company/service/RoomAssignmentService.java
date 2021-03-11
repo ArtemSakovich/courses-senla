@@ -2,11 +2,13 @@ package com.company.service;
 
 import com.company.api.dao.IGuestDao;
 import com.company.api.dao.IRoomAssignmentDao;
-import com.company.api.exceptions.OperationCancelledException;
 import com.company.api.service.IRoomAssignmentService;
 import com.company.dao.GuestDao;
 import com.company.dao.RoomAssignmentDao;
-import com.company.model.*;
+import com.company.model.Guest;
+import com.company.model.Maintenance;
+import com.company.model.Room;
+import com.company.model.RoomAssignment;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -91,6 +93,14 @@ public class RoomAssignmentService implements IRoomAssignmentService {
                 .sorted(Comparator.comparing(RoomAssignment::getCheckOutDate))
                 .map(RoomAssignment::getRoom)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void completeDeserialization() {
+        for (RoomAssignment roomAssignment : RoomAssignmentDao.getInstance().getAll()) {
+            roomAssignment.getRoom().setRoomAssignment(roomAssignment);
+            roomAssignment.getGuest().setRoomAssignment(roomAssignment);
+        }
     }
 
 }

@@ -19,4 +19,5 @@ public interface IRoomAssignmentService {
 
     public List<Room> sortRoomsByCheckOutDate();
 
+    void completeDeserialization();
 }

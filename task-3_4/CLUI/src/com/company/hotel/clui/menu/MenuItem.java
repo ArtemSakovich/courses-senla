@@ -1,7 +1,7 @@
 package com.company.hotel.clui.menu;
 
 import com.company.api.exceptions.OperationCancelledException;
-import com.company.hotel.clui.actions.IAction;
+import com.company.hotel.clui.api.IAction;
 
 import java.text.ParseException;
 
@@ -16,7 +16,7 @@ public class MenuItem {
         this.nextMenu = nextMenu;
     }
 
-    public void doAction() throws ParseException, OperationCancelledException {
+    public void doAction() throws ParseException, OperationCancelledException{
         action.execute();
     }
 

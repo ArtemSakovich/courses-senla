@@ -7,9 +7,7 @@ public class Maintenance extends AEntity {
     private String maintenanceName;
     private Double maintenancePrice;
     private MaintenanceSection maintenanceSection;
-    private Guest guest;
     private LocalDate orderDate;
-    private Long id;
 
     public Maintenance(String maintenanceName, Double maintenancePrice, MaintenanceSection maintenanceSection) {
         this.maintenanceName = maintenanceName;
@@ -77,7 +75,7 @@ public class Maintenance extends AEntity {
 
     @Override
     public String toString() {
-        return "Section: " + maintenanceSection + ". Maintenance #" + getId() + ". Name: " + maintenanceName +
-                ". Price: " + maintenancePrice;
+        return "Section: " + maintenanceSection + "; Maintenance #" + getId() + "; Name: " + maintenanceName +
+                "; Price: " + maintenancePrice;
     }
 }

@@ -1,14 +1,7 @@
 package com.company.model;
 
-import com.company.service.RoomService;
-
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Room extends AEntity implements Comparable<Room> {
 
@@ -17,8 +10,7 @@ public class Room extends AEntity implements Comparable<Room> {
     private Double roomPrice;
     private Integer numberOfBeds;
     private Integer numberOfStars;
-    private Long id;
-    private List<RoomAssignment> roomAssignments = new ArrayList<>();
+    private transient List<RoomAssignment> roomAssignments;
 
     public Room(Integer roomNumber, Double roomPrice, Integer numberOfBeds, Integer numberOfStars) {
         this.roomNumber = roomNumber;
@@ -62,7 +54,7 @@ public class Room extends AEntity implements Comparable<Room> {
 
     public List<Guest> getTenants() {
         List<Guest> tenants = new ArrayList<>();
-        for (RoomAssignment assignment : roomAssignments) {
+        for (RoomAssignment assignment : getRoomAssignments()) {
             if (RoomAssignmentStatus.ACTIVE.equals(assignment.getRoomAssignmentStatus())) {
                 tenants.add(assignment.getGuest());
             }
@@ -71,11 +63,14 @@ public class Room extends AEntity implements Comparable<Room> {
     }
 
     public List<RoomAssignment> getRoomAssignments() {
-        return new ArrayList<>(roomAssignments);
+        if (roomAssignments == null) {
+            roomAssignments = new ArrayList<>();
+        }
+        return roomAssignments;
     }
 
     public void setRoomAssignment(RoomAssignment roomAssignment) {
-        roomAssignments.add(roomAssignment);
+        getRoomAssignments().add(roomAssignment);
     }
 
     public List<RoomAssignment> getActiveRoomAssignments() {
@@ -138,6 +133,6 @@ public class Room extends AEntity implements Comparable<Room> {
         return "Room #" + getId() + "; Room number: " + roomNumber + "; Number of stars: "
                 + numberOfStars + "; Number of beds: " + numberOfBeds +
                 "; Price: " + roomPrice + "; Status: " + roomStatus.toString() +
-                "; Number of tenants: " + getTenants().size();
+                "; Number of tenants: " + getTenants().size(); // + " " + "Room ass: " + roomAssignments;
     }
 }

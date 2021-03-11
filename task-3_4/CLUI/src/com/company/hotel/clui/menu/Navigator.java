@@ -1,9 +1,13 @@
 package com.company.hotel.clui.menu;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Navigator {
     private static Navigator instance;
     private Menu currentMenu;
     private Builder builder;
+    Logger log = Logger.getLogger(Navigator.class.getName());
 
     private Navigator() {
         builder = Builder.getInstance();
@@ -38,7 +42,9 @@ public class Navigator {
                     currentMenu = builder.createRetryMenu(menuItem);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
+                    log.log(Level.SEVERE, e.getMessage(), e);
                     currentMenu = builder.createRetryMenu(menuItem);
+
                 }
             } catch (IndexOutOfBoundsException e) {
                 // User selected non-existing menu index

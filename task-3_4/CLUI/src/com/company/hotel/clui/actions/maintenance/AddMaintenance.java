@@ -1,7 +1,7 @@
 package com.company.hotel.clui.actions.maintenance;
 
-import com.company.hotel.clui.actions.Facade;
-import com.company.hotel.clui.actions.IAction;
+import com.company.hotel.clui.facade.Facade;
+import com.company.hotel.clui.api.IAction;
 import com.company.model.MaintenanceSection;
 
 import java.util.Scanner;
