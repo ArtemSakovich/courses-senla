@@ -1,12 +1,13 @@
-Mar 10, 2021 6:56:36 PM com.company.hotel.clui.menu.Navigator navigate
-SEVERE: Cannot invoke "java.util.List.add(Object)" because "this.roomAssignments" is null
-java.lang.NullPointerException: Cannot invoke "java.util.List.add(Object)" because "this.roomAssignments" is null
-	at com.company.model.Guest.setRoomAssignment(Guest.java:48)
-	at com.company.service.GuestService.accommodateToRoom(GuestService.java:78)
-	at com.company.hotel.clui.facade.Facade.accommodateToRoom(Facade.java:74)
-	at com.company.hotel.clui.actions.guest.FlipToRoom.execute(FlipToRoom.java:19)
-	at com.company.hotel.clui.menu.MenuItem.doAction(MenuItem.java:20)
-	at com.company.hotel.clui.menu.Navigator.navigate(Navigator.java:38)
-	at com.company.hotel.clui.menu.MenuController.run(MenuController.java:30)
-	at com.company.Main.main(Main.java:13)
+Mar 23, 2021 10:28:41 AM com.company.service.GuestService accommodateToRoom
+SEVERE: Incorrect input when trying to accommodate a guest
+Mar 23, 2021 10:28:41 AM com.company.menu.Navigator navigate
+SEVERE: Guest or room not found
+java.lang.IllegalArgumentException: Guest or room not found
+	at com.company.service.GuestService.accommodateToRoom(GuestService.java:72)
+	at com.company.facade.Facade.accommodateToRoom(Facade.java:63)
+	at com.company.actions.guest.FlipToRoom.execute(FlipToRoom.java:23)
+	at com.company.menu.MenuItem.doAction(MenuItem.java:19)
+	at com.company.menu.Navigator.navigate(Navigator.java:35)
+	at com.company.menu.MenuController.run(MenuController.java:26)
+	at com.company.Main.main(Main.java:17)
 

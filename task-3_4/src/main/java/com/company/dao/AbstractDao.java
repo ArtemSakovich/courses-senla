@@ -52,9 +52,10 @@ public class AbstractDao<T extends AEntity> implements IGenericDao<T> {
             for (T entity : repository) {
                 ids.add(entity.getId());
             }
+            Long max = Collections.max(ids);
             return Collections.max(ids);
         } else {
-            return 1L;
+            return 0L;
         }
     }
 }

@@ -3,8 +3,9 @@ package com.company.service;
 import com.company.api.dao.IGuestDao;
 import com.company.api.dao.IRoomAssignmentDao;
 import com.company.api.service.IRoomAssignmentService;
-import com.company.dao.GuestDao;
-import com.company.dao.RoomAssignmentDao;
+import com.company.configuration.annotation.ConfigClass;
+import com.company.injection.annotation.DependencyClass;
+import com.company.injection.annotation.DependencyComponent;
 import com.company.model.Guest;
 import com.company.model.Maintenance;
 import com.company.model.Room;
@@ -16,24 +17,16 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
+@ConfigClass
+@DependencyClass
 public class RoomAssignmentService implements IRoomAssignmentService {
-
-    private static IRoomAssignmentService instance;
-    private final IRoomAssignmentDao roomAssignmentDao;
-    private final IGuestDao guestDao;
-    Logger log = Logger.getLogger(RoomAssignmentService.class.getName());
+    @DependencyComponent
+    private IRoomAssignmentDao roomAssignmentDao;
+    @DependencyComponent
+    private IGuestDao guestDao;
+    private static final Logger log = Logger.getLogger(RoomAssignmentService.class.getName());
 
     private RoomAssignmentService() {
-        this.roomAssignmentDao = RoomAssignmentDao.getInstance();
-        this.guestDao = GuestDao.getInstance();
-    }
-
-    public static IRoomAssignmentService getInstance() {
-        if (instance == null) {
-            instance = new RoomAssignmentService();
-        }
-        return instance;
     }
 
     @Override
@@ -97,7 +90,7 @@ public class RoomAssignmentService implements IRoomAssignmentService {
 
     @Override
     public void completeDeserialization() {
-        for (RoomAssignment roomAssignment : RoomAssignmentDao.getInstance().getAll()) {
+        for (RoomAssignment roomAssignment : roomAssignmentDao.getAll()) {
             roomAssignment.getRoom().setRoomAssignment(roomAssignment);
             roomAssignment.getGuest().setRoomAssignment(roomAssignment);
         }

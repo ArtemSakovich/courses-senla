@@ -2,49 +2,45 @@ package com.company.service;
 
 import com.company.api.dao.IRoomDao;
 import com.company.api.service.IRoomService;
-import com.company.dao.RoomDao;
-import com.company.model.*;
+import com.company.configuration.annotation.ConfigClass;
+import com.company.configuration.annotation.ConfigProperty;
+import com.company.injection.annotation.DependencyClass;
+import com.company.injection.annotation.DependencyComponent;
+import com.company.model.Guest;
+import com.company.model.Room;
+import com.company.model.RoomAssignment;
+import com.company.model.RoomStatus;
 import com.company.util.IdGenerator;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+@ConfigClass
+@DependencyClass
 public class RoomService implements IRoomService {
-    private static IRoomService instance;
-    private final IRoomDao roomDao;
+
+    @DependencyComponent
+    private IRoomDao roomDao;
+    @ConfigProperty(configName = "hoteladministrator.properties", propertyName = "isRoomStatusChangeable")
     private boolean isRoomStatusChangeable;
-    private Integer allowedNumberOfNotes = 3;
-    Logger log = Logger.getLogger(RoomService.class.getName());
+    @ConfigProperty(configName = "hoteladministrator.properties", propertyName = "allowedNumberOfNotes")
+    private int allowedNumberOfNotes;
+    private static final Logger log = Logger.getLogger(RoomService.class.getName());
 
     private RoomService() {
-        this.roomDao = RoomDao.getInstance();
-        try (FileInputStream input = new FileInputStream("hotelAdministrator.properties")) {
-            Properties properties = new Properties();
-            properties.load(input);
-            this.isRoomStatusChangeable = Boolean.parseBoolean(properties.getProperty("abilityToChangeRoomStatus",
-                    "false"));
-            this.allowedNumberOfNotes = Integer.parseInt(properties.getProperty("amountOfNotes"));
-        } catch (IOException e) {
-            log.log(Level.SEVERE, "Property file not found");
-        }
-    }
 
-    public static IRoomService getInstance() {
-        if (instance == null) {
-            instance = new RoomService();
-        }
-        return instance;
     }
 
     @Override
     public Room addRoom(Integer roomNumber, Double roomPrice, Integer numberOfBeds, Integer numberOfStars) {
         Room room = new Room(roomNumber, roomPrice, numberOfBeds, numberOfStars);
-        room.setId(IdGenerator.getInstance().generateRoomId());
+        room.setId(IdGenerator.getInstance().generateId(roomDao.getMaxId()));
         room.setRoomStatus(RoomStatus.FREE);
         roomDao.save(room);
         return room;

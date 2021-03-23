@@ -6,10 +6,8 @@ import com.company.api.dao.IRoomAssignmentDao;
 import com.company.api.dao.IRoomDao;
 import com.company.api.exceptions.OperationCancelledException;
 import com.company.api.service.IGuestService;
-import com.company.dao.GuestDao;
-import com.company.dao.MaintenanceDao;
-import com.company.dao.RoomAssignmentDao;
-import com.company.dao.RoomDao;
+import com.company.injection.annotation.DependencyClass;
+import com.company.injection.annotation.DependencyComponent;
 import com.company.model.*;
 import com.company.util.IdGenerator;
 
@@ -22,33 +20,36 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@DependencyClass
 public class GuestService implements IGuestService {
-
-    private static IGuestService instance;
-    private final IGuestDao guestDao;
-    private final IRoomDao roomDao;
-    private final IRoomAssignmentDao roomAssignmentDao;
-    private final IMaintenanceDao maintenanceDao;
-    Logger log = Logger.getLogger(GuestService.class.getName());
+    @DependencyComponent
+    private IGuestDao guestDao;
+    @DependencyComponent
+    private IRoomDao roomDao;
+    @DependencyComponent
+    private IRoomAssignmentDao roomAssignmentDao;
+    @DependencyComponent
+    private IMaintenanceDao maintenanceDao;
+    private static final Logger log = Logger.getLogger(GuestService.class.getName());
 
     private GuestService() {
-        this.guestDao = GuestDao.getInstance();
-        this.roomDao = RoomDao.getInstance();
-        this.maintenanceDao = MaintenanceDao.getInstance();
-        this.roomAssignmentDao = RoomAssignmentDao.getInstance();
+
     }
 
-    public static IGuestService getInstance() {
-        if (instance == null) {
-            instance = new GuestService();
-        }
-        return instance;
-    }
-
+    /**
+     * The method is called by the execute() method from AddGuest[Action] class. Receives from it, the first name,
+     * last name and age of the guest entered by the user through the console. A new object of the guest type is
+     * created, and the same parameters are passed to its constructor. Also, guests ID is generated and sets to
+     * new guest, after which the new guest will be saved in the DAO repository. The method returns a new guest object.
+     * @param name guest's name
+     * @param surname guest's surname
+     * @param age guest's age
+     * @return new guest object
+     */
     @Override
     public Guest addGuest(String name, String surname, Integer age) {
         Guest guest = new Guest(name, surname, age);
-        guest.setId(IdGenerator.getInstance().generateGuestId());
+        guest.setId(IdGenerator.getInstance().generateId(guestDao.getMaxId()));
         guestDao.save(guest);
         return guest;
     }
@@ -73,7 +74,7 @@ public class GuestService implements IGuestService {
         if (roomToFlip.getRoomStatus().equals(RoomStatus.FREE)) {
             RoomAssignment roomAssignment = new RoomAssignment(roomToFlip, guestToFlip, LocalDateTime.now(), checkOutDate,
                     RoomAssignmentStatus.ACTIVE);
-            roomAssignment.setId(IdGenerator.getInstance().generateRoomAssignmentId());
+            roomAssignment.setId(IdGenerator.getInstance().generateId(roomAssignmentDao.getMaxId()));
             roomToFlip.setRoomAssignment(roomAssignment);
             guestToFlip.setRoomAssignment(roomAssignment);
             roomAssignmentDao.save(roomAssignment);

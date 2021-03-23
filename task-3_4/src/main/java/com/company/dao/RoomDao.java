@@ -1,21 +1,10 @@
 package com.company.dao;
 
 import com.company.api.dao.IRoomDao;
+import com.company.injection.annotation.DependencyClass;
 import com.company.model.Room;
-
+@DependencyClass
 public class RoomDao extends AbstractDao<Room> implements IRoomDao {
-
-    private static IRoomDao instance;
-
-    private RoomDao() {
-    }
-
-    public static IRoomDao getInstance() {
-        if (instance == null) {
-            instance = new RoomDao();
-        }
-        return instance;
-    }
 
     @Override
     public void update(Room updatedRoom) {

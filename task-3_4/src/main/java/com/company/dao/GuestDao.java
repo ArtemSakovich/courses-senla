@@ -1,20 +1,10 @@
 package com.company.dao;
 
 import com.company.api.dao.IGuestDao;
+import com.company.injection.annotation.DependencyClass;
 import com.company.model.Guest;
-
+@DependencyClass
 public class GuestDao extends AbstractDao<Guest> implements IGuestDao {
-    private static IGuestDao instance;
-
-    private GuestDao() {
-    }
-
-    public static IGuestDao getInstance() {
-        if (instance == null) {
-            instance = new GuestDao();
-        }
-        return instance;
-    }
 
     @Override
     public void update(Guest updatedGuest) {

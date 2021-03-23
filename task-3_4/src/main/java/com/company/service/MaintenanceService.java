@@ -3,9 +3,13 @@ package com.company.service;
 import com.company.api.dao.IGuestDao;
 import com.company.api.dao.IMaintenanceDao;
 import com.company.api.service.IMaintenanceService;
-import com.company.dao.GuestDao;
-import com.company.dao.MaintenanceDao;
-import com.company.model.*;
+import com.company.configuration.annotation.ConfigClass;
+import com.company.injection.annotation.DependencyClass;
+import com.company.injection.annotation.DependencyComponent;
+import com.company.model.Guest;
+import com.company.model.Maintenance;
+import com.company.model.MaintenanceSection;
+import com.company.model.RoomAssignment;
 import com.company.util.IdGenerator;
 
 import java.util.ArrayList;
@@ -14,30 +18,23 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
+@ConfigClass
+@DependencyClass
 public class MaintenanceService implements IMaintenanceService {
-
-    private static IMaintenanceService instance;
-    private final IMaintenanceDao maintenanceDao;
-    private final IGuestDao guestDao;
-    Logger log = Logger.getLogger(Maintenance.class.getName());
+    @DependencyComponent
+    private IMaintenanceDao maintenanceDao;
+    @DependencyComponent
+    private IGuestDao guestDao;
+    private static final Logger log = Logger.getLogger(Maintenance.class.getName());
 
     private MaintenanceService() {
-        this.maintenanceDao = MaintenanceDao.getInstance();
-        this.guestDao = GuestDao.getInstance();
-    }
 
-    public static IMaintenanceService getInstance() {
-        if (instance == null) {
-            instance = new MaintenanceService();
-        }
-        return instance;
     }
 
     @Override
     public Maintenance addMaintenance(String name, Double price, MaintenanceSection section) {
         Maintenance maintenance = new Maintenance(name, price, section);
-        maintenance.setId(IdGenerator.getInstance().generateMaintenanceId());
+        maintenance.setId(IdGenerator.getInstance().generateId(maintenanceDao.getMaxId()));
         maintenanceDao.save(maintenance);
         return maintenance;
     }
