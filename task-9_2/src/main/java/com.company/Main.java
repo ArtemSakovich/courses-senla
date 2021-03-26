@@ -1,11 +1,8 @@
 package com.company;
-
 public class Main {
-    public static void main(String[] args) {
-        MyThread thread1 = new MyThread("Thread #1");
-        MyThread thread2 = new MyThread("Thread #2");
-
-        thread1.start();
-        thread2.start();
+    public static void main(String[] strings) {
+        Object lock = new Object();
+        new MyThread(lock, "Thread #1").start();
+        new MyThread(lock, "Thread #2").start();
     }
 }

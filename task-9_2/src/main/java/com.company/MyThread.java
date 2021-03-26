@@ -1,28 +1,29 @@
 package com.company;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+class MyThread extends Thread {
 
-public class MyThread extends Thread {
-
-    static Lock lock = new ReentrantLock();
+    private Object lock;
     private String threadName;
 
-    public MyThread(String threadName) {
+    public MyThread(Object object, String threadName) {
+        this.lock = object;
         this.threadName = threadName;
     }
 
     @Override
     public void run() {
-        for (;;) {
-            System.out.println(this.threadName);
-            try {
-                MyThread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        while (true) {
+            synchronized (lock) {
+                try {
+                    System.out.println(threadName);
+                    lock.notify();
+                    lock.wait();
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            lock.lock();
-            lock.unlock();
         }
     }
 }
+
