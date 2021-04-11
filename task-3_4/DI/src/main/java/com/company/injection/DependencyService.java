@@ -4,6 +4,7 @@ import com.company.configuration.ConfigService;
 import com.company.injection.annotation.DependencyClass;
 import com.company.injection.annotation.DependencyComponent;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -30,7 +31,7 @@ public class DependencyService {
     }
 
     public void setVariable(Class<?> clazz) throws IllegalAccessException, InstantiationException,
-            NoSuchMethodException, InvocationTargetException {
+            NoSuchMethodException, InvocationTargetException, FileNotFoundException {
         if (clazz.getAnnotation(DependencyClass.class) == null) {
             throw new IllegalArgumentException("Class " + clazz.getSimpleName() + " don't have 'DependencyClass' annotation");
         }
@@ -43,10 +44,8 @@ public class DependencyService {
     }
 
     public void initConstructor() throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException, InstantiationException {
-        final List<Field> annotatedFields = Arrays.stream(instanceClass.getClass().getDeclaredFields())
-                .filter(i -> !i.getType().isPrimitive() && i.isAnnotationPresent(DependencyComponent.class))
-                .collect(Collectors.toList());
+            InvocationTargetException, InstantiationException, FileNotFoundException {
+        final List<Field> annotatedFields = getAnnotatedFields();
         for (Field field : annotatedFields) {
             final Class<?> implClass = DependencyInject.getInstance().injection(field);
             if (implClass.isAnnotationPresent(DependencyClass.class) && !instanceClassMap.containsKey(implClass.getName())) {
@@ -61,6 +60,12 @@ public class DependencyService {
                 field.setAccessible(false);
             }
         }
+    }
+
+    private List<Field> getAnnotatedFields() {
+        return Arrays.stream(instanceClass.getClass().getDeclaredFields())
+                .filter(i -> !i.getType().isPrimitive() && i.isAnnotationPresent(DependencyComponent.class))
+                .collect(Collectors.toList());
     }
 
     public Map<String, Object> getInstanceClassMap() {

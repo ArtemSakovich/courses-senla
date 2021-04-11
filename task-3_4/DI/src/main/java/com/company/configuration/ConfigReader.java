@@ -1,5 +1,7 @@
 package com.company.configuration;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -18,13 +20,15 @@ public class ConfigReader {
         return instance;
     }
 
-    public Properties readConfig(String path) {
+    public Properties readConfig(String path) throws FileNotFoundException {
         try (InputStream input = this.getClass().getClassLoader().getResourceAsStream(path)) {
             properties = new Properties();
             properties.load(input);
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             log.log(Level.SEVERE, "Property file not found");
+            throw new FileNotFoundException("Property file not found");
         }
         return properties;
     }
+
 }

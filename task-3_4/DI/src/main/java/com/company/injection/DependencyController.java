@@ -2,6 +2,7 @@ package com.company.injection;
 
 import com.company.configuration.ConfigReader;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,8 +14,10 @@ public class DependencyController {
         try {
             DependencyService.getInstance().setVariable(clazz);
             DependencyService.getInstance().initConstructor();
-        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException |
+                InvocationTargetException | FileNotFoundException e) {
             log.log(Level.SEVERE, "Error when trying to set dependency!");
+            System.exit(0);
         }
     }
 }

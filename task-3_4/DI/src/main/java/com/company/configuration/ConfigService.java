@@ -3,6 +3,7 @@ package com.company.configuration;
 import com.company.configuration.annotation.ConfigClass;
 import com.company.configuration.annotation.ConfigProperty;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +22,7 @@ public class ConfigService {
         return instance;
     }
 
-    public void setValue(Object instanceOfClass) throws IllegalAccessException {
+    public void setValue(Object instanceOfClass) throws IllegalAccessException, FileNotFoundException {
         this.configClass = instanceOfClass.getClass();
         final ConfigClass annotation = configClass.getAnnotation(ConfigClass.class);
         if (!(annotation == null)) {
@@ -30,7 +31,7 @@ public class ConfigService {
         }
     }
 
-    public void addFieldValue(Object instanceOfClass) throws IllegalAccessException {
+    public void addFieldValue(Object instanceOfClass) throws IllegalAccessException, FileNotFoundException {
         final List<Field> annotatedFields = Arrays.stream(configClass.getDeclaredFields())
                 .filter(i -> i.isAnnotationPresent(ConfigProperty.class))
                 .collect(Collectors.toList());

@@ -20,7 +20,7 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 vcs.xml
-/.idea/
+
 
 # Windows shortcuts
 *.lnk

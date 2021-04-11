@@ -1,12 +1,32 @@
-Mar 23, 2021 10:28:41 AM com.company.service.GuestService accommodateToRoom
-SEVERE: Incorrect input when trying to accommodate a guest
-Mar 23, 2021 10:28:41 AM com.company.menu.Navigator navigate
-SEVERE: Guest or room not found
-java.lang.IllegalArgumentException: Guest or room not found
-	at com.company.service.GuestService.accommodateToRoom(GuestService.java:72)
-	at com.company.facade.Facade.accommodateToRoom(Facade.java:63)
-	at com.company.actions.guest.FlipToRoom.execute(FlipToRoom.java:23)
-	at com.company.menu.MenuItem.doAction(MenuItem.java:19)
+Apr 11, 2021 1:15:21 PM com.company.menu.Navigator navigate
+SEVERE: Unable to make field private final int java.time.LocalDate.year accessible: module java.base does not "opens java.time" to unnamed module @4f3f5b24
+java.lang.reflect.InaccessibleObjectException: Unable to make field private final int java.time.LocalDate.year accessible: module java.base does not "opens java.time" to unnamed module @4f3f5b24
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:357)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:297)
+	at java.base/java.lang.reflect.Field.checkCanSetAccessible(Field.java:177)
+	at java.base/java.lang.reflect.Field.setAccessible(Field.java:171)
+	at com.google.gson.internal.reflect.UnsafeReflectionAccessor.makeAccessible(UnsafeReflectionAccessor.java:44)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.getBoundFields(ReflectiveTypeAdapterFactory.java:159)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.create(ReflectiveTypeAdapterFactory.java:102)
+	at com.google.gson.Gson.getAdapter(Gson.java:458)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.createBoundField(ReflectiveTypeAdapterFactory.java:117)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.getBoundFields(ReflectiveTypeAdapterFactory.java:166)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.create(ReflectiveTypeAdapterFactory.java:102)
+	at com.google.gson.Gson.getAdapter(Gson.java:458)
+	at com.google.gson.internal.bind.CollectionTypeAdapterFactory.create(CollectionTypeAdapterFactory.java:53)
+	at com.google.gson.Gson.getAdapter(Gson.java:458)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.createBoundField(ReflectiveTypeAdapterFactory.java:117)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.getBoundFields(ReflectiveTypeAdapterFactory.java:166)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.create(ReflectiveTypeAdapterFactory.java:102)
+	at com.google.gson.Gson.getAdapter(Gson.java:458)
+	at com.google.gson.Gson.fromJson(Gson.java:931)
+	at com.google.gson.Gson.fromJson(Gson.java:897)
+	at com.google.gson.Gson.fromJson(Gson.java:846)
+	at com.google.gson.Gson.fromJson(Gson.java:817)
+	at com.company.util.SerializeService.deserialize(SerializeService.java:65)
+	at com.company.facade.Facade.deserialize(Facade.java:180)
+	at com.company.menu.Builder.lambda$buildMenu$0(Builder.java:54)
+	at com.company.menu.MenuItem.doAction(MenuItem.java:17)
 	at com.company.menu.Navigator.navigate(Navigator.java:35)
 	at com.company.menu.MenuController.run(MenuController.java:26)
 	at com.company.Main.main(Main.java:17)
