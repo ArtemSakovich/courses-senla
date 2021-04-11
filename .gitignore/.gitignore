@@ -19,6 +19,8 @@ $RECYCLE.BIN/
 *.msix
 *.msm
 *.msp
+vcs.xml
+/.idea/
 
 # Windows shortcuts
 *.lnk
