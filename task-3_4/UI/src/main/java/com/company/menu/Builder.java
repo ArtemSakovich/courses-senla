@@ -10,6 +10,8 @@ import com.company.facade.Facade;
 import com.company.injection.annotation.DependencyClass;
 import com.company.injection.annotation.DependencyComponent;
 
+import java.sql.SQLException;
+
 @DependencyClass
 public class Builder {
     @DependencyComponent
@@ -51,11 +53,9 @@ public class Builder {
 
     public void buildMenu() {
         rootMenu = new Menu();
-        rootMenu.addMenuItem(new MenuItem("Download data", () -> facade.deserialize(), rootMenu));
         rootMenu.addMenuItem(new MenuItem("Guest Menu", () -> { }, createGuestMenu()));
         rootMenu.addMenuItem(new MenuItem("Room Menu", () -> { }, createRoomMenu()));
         rootMenu.addMenuItem(new MenuItem("Maintenance Menu", () -> { }, createMaintenanceMenu()));
-        rootMenu.addMenuItem(new MenuItem("Save data", () -> facade.serialize() , rootMenu));
         rootMenu.addMenuItem(new MenuItem("Exit", () -> {
             System.exit(0);
         }, null));
@@ -73,7 +73,7 @@ public class Builder {
         roomMenu.addMenuItem(new MenuItem("Add room", addRoomAction, roomMenu));
         roomMenu.addMenuItem(new MenuItem("Change room status", changeRoomStatusAction, roomMenu));
         roomMenu.addMenuItem(new MenuItem("Change room price", changeRoomPrice, roomMenu));
-        roomMenu.addMenuItem(new MenuItem("View the list of rooms", () -> facade.viewListOfRooms(), roomMenu));
+        roomMenu.addMenuItem(new MenuItem("View the list of rooms", () -> { facade.viewListOfRooms(); }, roomMenu));
         roomMenu.addMenuItem(new MenuItem("View the list of free rooms", () -> facade.viewListOfFreeRooms(), roomMenu));
         roomMenu.addMenuItem(new MenuItem("Get total number of free rooms", () -> facade.getNumberOfFreeRooms(), roomMenu));
         roomMenu.addMenuItem(new MenuItem("View three last guests of the room", viewThreeLastGuestsOfRoom, roomMenu));
@@ -91,8 +91,8 @@ public class Builder {
         guestMenu.addMenuItem(new MenuItem("Add guest", addGuest, guestMenu));
         guestMenu.addMenuItem(new MenuItem("Check guest into room", flipToRoom, guestMenu));
         guestMenu.addMenuItem(new MenuItem("Evict guest from room", evictFromRoom, guestMenu));
-        guestMenu.addMenuItem(new MenuItem("View the list of all guests", () -> facade.viewListOfGuests(), guestMenu));
-        guestMenu.addMenuItem(new MenuItem("Get total number of guests who live in the hotel", () -> facade.getNumberOfGuests(), guestMenu));
+        guestMenu.addMenuItem(new MenuItem("View the list of all guests", () -> { facade.viewListOfGuests(); }, guestMenu));
+        guestMenu.addMenuItem(new MenuItem("Get total number of guests who live in the hotel", () -> { facade.getNumberOfGuests(); }, guestMenu));
         guestMenu.addMenuItem(new MenuItem("Get amount per stay of guest", getAmountPerStay, guestMenu));
         guestMenu.addMenuItem(new MenuItem("Sort guests by", () -> { }, createSortGuestMenu()));
         guestMenu.addMenuItem(new MenuItem(("Back to main menu"), () -> { }, rootMenu));

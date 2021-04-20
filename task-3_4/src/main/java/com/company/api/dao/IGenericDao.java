@@ -2,20 +2,21 @@ package com.company.api.dao;
 
 import com.company.model.AEntity;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface IGenericDao<T extends AEntity> {
-    T getById(Long id);
 
-    List<T> getAll();
+    T getById(Connection connection, Long id);
 
-    void save(T entity);
+    List<T> getAll(Connection connection);
 
-    void saveAll(List<T> entityList);
+    void save(Connection connection, T entity);
 
-    void update(T entity);
+    void update(Connection connection, T updatedEntity) throws SQLException;
 
-    void delete(T entity);
+    void delete(Connection connection, T entity);
 
-    Long getMaxId();
+    List<T> getSortedABCEntities(Connection connection);
 }

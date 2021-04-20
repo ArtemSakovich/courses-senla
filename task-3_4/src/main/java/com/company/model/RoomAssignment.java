@@ -1,64 +1,62 @@
 package com.company.model;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import static java.time.temporal.ChronoUnit.DAYS;
 
 public class RoomAssignment extends AEntity {
-    private Room room;
-    private Guest guest;
-    private LocalDateTime checkInDate;
-    private LocalDateTime checkOutDate;
+    private Long roomId;
+    private Long guestId;
+    private Timestamp checkInDate;
+    private Timestamp checkOutDate;
     private RoomAssignmentStatus roomAssignmentStatus;
-    private LocalDateTime createdOn;
+    private Timestamp createdOn;
     private List<Maintenance> maintenances = new ArrayList<>();
 
-    public RoomAssignment(Room room, Guest guest, LocalDateTime checkInDate, LocalDateTime checkOutDate,
+    public RoomAssignment(Long roomId, Long guestId, Timestamp checkInDate, Timestamp checkOutDate,
                           RoomAssignmentStatus roomAssignmentStatus) {
-        this.room = room;
-        this.guest = guest;
+        this.roomId = roomId;
+        this.guestId = guestId;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
-        this.createdOn = LocalDateTime.now();
         this.roomAssignmentStatus = roomAssignmentStatus;
+        this.createdOn = Timestamp.valueOf(LocalDateTime.now());
     }
 
-    public Room getRoom() {
-        return room;
+    public RoomAssignment() {
+        maintenances = new ArrayList<>();
     }
 
-    public Integer getRoomNumber() {
-        return room.getRoomNumber();
+    public Long getRoomId() {
+        return roomId;
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
     }
 
-    public Guest getGuest() {
-        return guest;
+    public Long getGuestId() {
+        return guestId;
     }
 
-    public void setGuest(Guest guest) {
-        this.guest = guest;
+    public void setGuestId(Long guestId) {
+        this.guestId = guestId;
     }
 
-    public LocalDateTime getCheckInDate() {
+    public Timestamp getCheckInDate() {
         return checkInDate;
     }
 
-    public void setCheckInDate(LocalDateTime checkInDate) {
+    public void setCheckInDate(Timestamp checkInDate) {
         this.checkInDate = checkInDate;
     }
 
-    public LocalDateTime getCheckOutDate() {
+    public Timestamp getCheckOutDate() {
         return checkOutDate;
     }
 
-    public void setCheckOutDate(LocalDateTime checkOutDate) {
+    public void setCheckOutDate(Timestamp checkOutDate) {
         this.checkOutDate = checkOutDate;
     }
 
@@ -70,18 +68,13 @@ public class RoomAssignment extends AEntity {
         this.roomAssignmentStatus = roomAssignmentStatus;
     }
 
-    public LocalDateTime getCreatedOn() {
+    public Timestamp getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(LocalDateTime createdOn) {
+    public void setCreatedOn(Timestamp createdOn) {
         this.createdOn = createdOn;
     }
-
-    public void setMaintenance(Maintenance maintenance) {
-        maintenances.add(maintenance);
-    }
-
 
     public List<Maintenance> getMaintenances() {
         return maintenances;
@@ -91,32 +84,8 @@ public class RoomAssignment extends AEntity {
         this.maintenances = maintenances;
     }
 
-    public Double getPricePerStay() {
-        Double totalMaintenancePrice = 0.0;
-        for (Maintenance maintenance : maintenances) {
-            totalMaintenancePrice += maintenance.getMaintenancePrice();
-        }
-        return room.getRoomPrice() * DAYS.between(checkInDate, checkOutDate) + totalMaintenancePrice;
+    public void addMaintenance(Maintenance maintenance) {
+        maintenances.add(maintenance);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RoomAssignment that = (RoomAssignment) o;
-        return Objects.equals(room, that.room) && Objects.equals(guest, that.guest) && Objects.equals(checkInDate, that.checkInDate) && Objects.equals(checkOutDate, that.checkOutDate) && roomAssignmentStatus == that.roomAssignmentStatus && Objects.equals(createdOn, that.createdOn) && Objects.equals(maintenances, that.maintenances);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(room, guest, checkInDate, checkOutDate, roomAssignmentStatus, createdOn, maintenances);
-    }
-
-    @Override
-    public String toString() {
-        return "Assignment #" + getId() + "; Guest: " + guest.getName() +
-                " " + guest.getSurname() + "; Room: " + room.getRoomNumber() +
-                "; Validity: " + getCheckInDate().toLocalDate() + " - " + getCheckOutDate().toLocalDate() +
-                "; Status: " + getRoomAssignmentStatus().toString();
-    }
 }

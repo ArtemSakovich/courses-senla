@@ -1,33 +1,646 @@
-Apr 11, 2021 1:15:21 PM com.company.menu.Navigator navigate
-SEVERE: Unable to make field private final int java.time.LocalDate.year accessible: module java.base does not "opens java.time" to unnamed module @4f3f5b24
-java.lang.reflect.InaccessibleObjectException: Unable to make field private final int java.time.LocalDate.year accessible: module java.base does not "opens java.time" to unnamed module @4f3f5b24
-	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:357)
-	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:297)
-	at java.base/java.lang.reflect.Field.checkCanSetAccessible(Field.java:177)
-	at java.base/java.lang.reflect.Field.setAccessible(Field.java:171)
-	at com.google.gson.internal.reflect.UnsafeReflectionAccessor.makeAccessible(UnsafeReflectionAccessor.java:44)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.getBoundFields(ReflectiveTypeAdapterFactory.java:159)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.create(ReflectiveTypeAdapterFactory.java:102)
-	at com.google.gson.Gson.getAdapter(Gson.java:458)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.createBoundField(ReflectiveTypeAdapterFactory.java:117)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.getBoundFields(ReflectiveTypeAdapterFactory.java:166)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.create(ReflectiveTypeAdapterFactory.java:102)
-	at com.google.gson.Gson.getAdapter(Gson.java:458)
-	at com.google.gson.internal.bind.CollectionTypeAdapterFactory.create(CollectionTypeAdapterFactory.java:53)
-	at com.google.gson.Gson.getAdapter(Gson.java:458)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.createBoundField(ReflectiveTypeAdapterFactory.java:117)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.getBoundFields(ReflectiveTypeAdapterFactory.java:166)
-	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.create(ReflectiveTypeAdapterFactory.java:102)
-	at com.google.gson.Gson.getAdapter(Gson.java:458)
-	at com.google.gson.Gson.fromJson(Gson.java:931)
-	at com.google.gson.Gson.fromJson(Gson.java:897)
-	at com.google.gson.Gson.fromJson(Gson.java:846)
-	at com.google.gson.Gson.fromJson(Gson.java:817)
-	at com.company.util.SerializeService.deserialize(SerializeService.java:65)
-	at com.company.facade.Facade.deserialize(Facade.java:180)
-	at com.company.menu.Builder.lambda$buildMenu$0(Builder.java:54)
-	at com.company.menu.MenuItem.doAction(MenuItem.java:17)
-	at com.company.menu.Navigator.navigate(Navigator.java:35)
-	at com.company.menu.MenuController.run(MenuController.java:26)
-	at com.company.Main.main(Main.java:17)
-
+Apr 20, 2021 5:14:59 PM org.postgresql.Driver loadDefaultProperties
+FINE: Loading driver configuration via classloader jdk.internal.loader.ClassLoaders$AppClassLoader@7ad041f3
+Apr 20, 2021 5:14:59 PM org.postgresql.Driver connect
+FINE: Connecting with URL: jdbc:postgresql://localhost/hotel_administrator_db
+Apr 20, 2021 5:14:59 PM org.postgresql.jdbc.PgConnection <init>
+FINE: PostgreSQL JDBC Driver 42.2.19
+Apr 20, 2021 5:14:59 PM org.postgresql.jdbc.PgConnection setDefaultFetchSize
+FINE:   setDefaultFetchSize = 0
+Apr 20, 2021 5:14:59 PM org.postgresql.jdbc.PgConnection setPrepareThreshold
+FINE:   setPrepareThreshold = 5
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.ConnectionFactoryImpl openConnectionImpl
+FINE: Trying to establish a protocol version 3 connection to localhost:5432
+Apr 20, 2021 5:14:59 PM org.postgresql.core.Encoding <init>
+FINEST: Creating new Encoding UTF-8 with fastASCIINumbers true
+Apr 20, 2021 5:14:59 PM org.postgresql.core.Encoding <init>
+FINEST: Creating new Encoding UTF-8 with fastASCIINumbers true
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.ConnectionFactoryImpl tryConnect
+FINE: Receive Buffer Size is 408,300
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.ConnectionFactoryImpl tryConnect
+FINE: Send Buffer Size is 146,988
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.ConnectionFactoryImpl enableSSL
+FINEST:  FE=> SSLRequest
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.ConnectionFactoryImpl enableSSL
+FINEST:  <=BE SSLRefused
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.ConnectionFactoryImpl sendStartupPacket
+FINEST:  FE=> StartupPacket(user=artemsakovich, database=hotel_administrator_db, client_encoding=UTF8, DateStyle=ISO, TimeZone=Europe/Minsk, extra_float_digits=2)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.ConnectionFactoryImpl doAuthentication
+FINEST:  <=BE AuthenticationOk
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(application_name = )
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(client_encoding = UTF8)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(DateStyle = ISO, MDY)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(integer_datetimes = on)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(IntervalStyle = postgres)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(is_superuser = on)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(server_encoding = UTF8)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(server_version = 13.2)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(session_authorization = artemsakovich)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(standard_conforming_strings = on)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(TimeZone = Europe/Minsk)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl readStartupMessages
+FINEST:  <=BE BackendKeyData(pid=2,057,ckey=-1,038,129,234)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(I)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.core.SetupQueryRunner$SimpleResultHandler@1e7c7811, maxRows=0, fetchSize=0, flags=1,047
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SET extra_float_digits = 3",oids={})
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=1)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(SET)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(I)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.core.SetupQueryRunner$SimpleResultHandler@76a3e297, maxRows=0, fetchSize=0, flags=1,047
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SET application_name = 'PostgreSQL JDBC Driver'",oids={})
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=1)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveParameterStatus
+FINEST:  <=BE ParameterStatus(application_name = PostgreSQL JDBC Driver)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(SET)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(I)
+Apr 20, 2021 5:14:59 PM org.postgresql.jdbc.PgConnection <init>
+FINEST:     types using binary send = TIMESTAMPTZ,OID_ARRAY,UUID,BYTEA_ARRAY,INT2_ARRAY,INT4_ARRAY,BYTEA,TEXT_ARRAY,TIMETZ,INT8,INT2,INT4,VARCHAR_ARRAY,INT8_ARRAY,POINT,TIMESTAMP,TIME,BOX,FLOAT4,FLOAT8,FLOAT4_ARRAY,FLOAT8_ARRAY
+Apr 20, 2021 5:14:59 PM org.postgresql.jdbc.PgConnection <init>
+FINEST:     types using binary receive = TIMESTAMPTZ,OID_ARRAY,UUID,BYTEA_ARRAY,INT2_ARRAY,INT4_ARRAY,BYTEA,TEXT_ARRAY,TIMETZ,INT8,INT2,INT4,VARCHAR_ARRAY,INT8_ARRAY,POINT,DATE,TIMESTAMP,TIME,BOX,FLOAT4,FLOAT8,FLOAT4_ARRAY,FLOAT8_ARRAY
+Apr 20, 2021 5:14:59 PM org.postgresql.jdbc.PgConnection <init>
+FINEST:     integer date/time = true
+Apr 20, 2021 5:14:59 PM org.postgresql.ds.common.BaseDataSource getConnection
+FINE: Created a ConnectionPoolDataSource from PostgreSQL JDBC Driver 42.2.19 for null at jdbc:postgresql://localhost/hotel_administrator_db
+Apr 20, 2021 5:14:59 PM org.postgresql.jdbc.PgConnection setAutoCommit
+FINE:   setAutoCommit = false
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@3ffcd140, maxRows=0, fetchSize=0, flags=49
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SELECT * FROM guest",oids={})
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribeStatement
+FINEST:  FE=> Describe(statement=null)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParameterDescription
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:  <=BE RowDescription(4)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(id,INT4,4,T)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(name,VARCHAR,65535,T)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(surname,VARCHAR,65535,T)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(age,INT2,2,T)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(I)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  FE marking setPortalDescribed(false) for query SYNC
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@6b67034, maxRows=0, fetchSize=0, flags=1
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="BEGIN",oids={})
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=0)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl flushIfDeadlockRisk
+FINEST: Couldn't estimate result size or result size unbounded, disabling batching for this query.
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl flushIfDeadlockRisk
+FINEST: Forcing Sync, receive buffer full or batching disallowed
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(BEGIN)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SELECT * FROM guest",oids={})
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribePortal
+FINEST:  FE=> Describe(portal=null)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=0)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:  <=BE RowDescription(4)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(id,INT4,4,T)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(name,VARCHAR,65535,T)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(surname,VARCHAR,65535,T)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(age,INT2,2,T)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=16)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=13)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=14)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(SELECT 3)
+Apr 20, 2021 5:14:59 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getLong
+FINEST:   getLong columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getLong
+FINEST:   getLong columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getLong
+FINEST:   getLong columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@4c6e276e, maxRows=0, fetchSize=0, flags=49
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SELECT * FROM roomassignment where guestId = $1",oids={0})
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribeStatement
+FINEST:  FE=> Describe(statement=null)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParameterDescription
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:  <=BE RowDescription(7)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(id,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(guestid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkindate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkoutdate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomassignmentstatus,VARCHAR,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(createdon,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  FE marking setPortalDescribed(false) for query SYNC
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@8e0379d, maxRows=0, fetchSize=0, flags=1
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl flushIfDeadlockRisk
+FINEST: Couldn't estimate result size or result size unbounded, disabling batching for this query.
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl flushIfDeadlockRisk
+FINEST: Forcing Sync, receive buffer full or batching disallowed
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SELECT * FROM roomassignment where guestId = $1",oids={20})
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null,$1=<1>,type=INT8)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribePortal
+FINEST:  FE=> Describe(portal=null)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=0)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:  <=BE RowDescription(7)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(id,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(guestid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkindate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkoutdate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomassignmentstatus,VARCHAR,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(createdon,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=66)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(SELECT 1)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getLong
+FINEST:   getLong columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getLong
+FINEST:   getLong columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getLong
+FINEST:   getLong columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getTimestamp
+FINEST:   getTimestamp columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 5
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 5
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getTimestamp
+FINEST:   getTimestamp columnIndex: 5
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 5
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 6
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 6
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 7
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 7
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getTimestamp
+FINEST:   getTimestamp columnIndex: 7
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 7
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@691a7f8f, maxRows=0, fetchSize=0, flags=49
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SELECT * FROM maintenance m INNER JOIN orderedMaintenances om ON m.id = om.maintenanceid where roomassignmentid = $1 ",oids={0})
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribeStatement
+FINEST:  FE=> Describe(statement=null)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParameterDescription
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:  <=BE RowDescription(8)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(id,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(maintenancename,VARCHAR,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(maintenanceprice,NUMERIC,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(maintenancesection,VARCHAR,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(orderdate,DATE,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomassignmentid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(maintenanceid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(orderdate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  FE marking setPortalDescribed(false) for query SYNC
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@50a7bc6e, maxRows=0, fetchSize=0, flags=1
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl flushIfDeadlockRisk
+FINEST: Couldn't estimate result size or result size unbounded, disabling batching for this query.
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl flushIfDeadlockRisk
+FINEST: Forcing Sync, receive buffer full or batching disallowed
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SELECT * FROM maintenance m INNER JOIN orderedMaintenances om ON m.id = om.maintenanceid where roomassignmentid = $1 ",oids={20})
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null,$1=<1>,type=INT8)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribePortal
+FINEST:  FE=> Describe(portal=null)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=0)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:  <=BE RowDescription(8)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(id,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(maintenancename,VARCHAR,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(maintenanceprice,NUMERIC,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(maintenancesection,VARCHAR,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(orderdate,DATE,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomassignmentid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(maintenanceid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(orderdate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE DataRow(len=44)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(SELECT 1)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getInt
+FINEST:   getInt columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getLong
+FINEST:   getLong columnIndex: 1
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 2
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getDouble
+FINEST:   getDouble columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 3
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 4
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 5
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getObject
+FINEST:   getObject columnIndex: 8
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 8
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getTimestamp
+FINEST:   getTimestamp columnIndex: 8
+Apr 20, 2021 5:15:00 PM org.postgresql.jdbc.PgResultSet getString
+FINEST:   getString columnIndex: 8
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@3b2da18f, maxRows=0, fetchSize=0, flags=49
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SELECT * FROM roomassignment where guestId = $1",oids={0})
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribeStatement
+FINEST:  FE=> Describe(statement=null)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParameterDescription
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:  <=BE RowDescription(7)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(id,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(guestid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkindate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkoutdate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomassignmentstatus,VARCHAR,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(createdon,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  FE marking setPortalDescribed(false) for query SYNC
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@5906ebcb, maxRows=0, fetchSize=0, flags=1
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl flushIfDeadlockRisk
+FINEST: Couldn't estimate result size or result size unbounded, disabling batching for this query.
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl flushIfDeadlockRisk
+FINEST: Forcing Sync, receive buffer full or batching disallowed
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SELECT * FROM roomassignment where guestId = $1",oids={20})
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null,$1=<2>,type=INT8)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribePortal
+FINEST:  FE=> Describe(portal=null)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=0)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:  <=BE RowDescription(7)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(id,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(guestid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkindate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkoutdate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomassignmentstatus,VARCHAR,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(createdon,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(SELECT 0)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@258e2e41, maxRows=0, fetchSize=0, flags=49
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SELECT * FROM roomassignment where guestId = $1",oids={0})
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribeStatement
+FINEST:  FE=> Describe(statement=null)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParameterDescription
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:  <=BE RowDescription(7)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(id,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(guestid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkindate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkoutdate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomassignmentstatus,VARCHAR,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(createdon,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  FE marking setPortalDescribed(false) for query SYNC
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl execute
+FINEST:   simple execute, handler=org.postgresql.jdbc.PgStatement$StatementResultHandler@3d299e3, maxRows=0, fetchSize=0, flags=1
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl flushIfDeadlockRisk
+FINEST: Couldn't estimate result size or result size unbounded, disabling batching for this query.
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl flushIfDeadlockRisk
+FINEST: Forcing Sync, receive buffer full or batching disallowed
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendParse
+FINEST:  FE=> Parse(stmt=null,query="SELECT * FROM roomassignment where guestId = $1",oids={20})
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendBind
+FINEST:  FE=> Bind(stmt=null,portal=null,$1=<3>,type=INT8)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendDescribePortal
+FINEST:  FE=> Describe(portal=null)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendExecute
+FINEST:  FE=> Execute(portal=null,limit=0)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl sendSync
+FINEST:  FE=> Sync
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE ParseComplete [null]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl processResults
+FINEST:  <=BE BindComplete [unnamed]
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:  <=BE RowDescription(7)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(id,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(guestid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomid,INT4,4,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkindate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(checkoutdate,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(roomassignmentstatus,VARCHAR,65535,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveFields
+FINEST:         Field(createdon,TIMESTAMP,8,T)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveCommandStatus
+FINEST:  <=BE CommandStatus(SELECT 0)
+Apr 20, 2021 5:15:00 PM org.postgresql.core.v3.QueryExecutorImpl receiveRFQ
+FINEST:  <=BE ReadyForQuery(T)

@@ -8,17 +8,17 @@ import java.util.List;
 public interface IMaintenanceService {
     Maintenance addMaintenance(String name, Double price, MaintenanceSection section);
 
-    void update(Maintenance updatedMaintenance);
-
-    Maintenance getById(Long id);
-
     void changeMaintenancePrice(Long id, Double newPrice);
 
-    List<Maintenance> getAllMaintenances();
+    List<Maintenance> sortMaintenancesOfCertainGuestByPrice(Long guestId);
 
-    public List<Maintenance> sortMaintenancesOfCertainGuestByPrice(Long guestId);
+    List<Maintenance> sortAllMaintenancesByPrice();
 
-    public List<Maintenance> sortAllMaintenancesByPrice();
+    List<Maintenance> sortAllMaintenancesBySectionABC();
 
-    public List<Maintenance> sortAllMaintenancesBySectionABC();
+    List<Maintenance> getAllMaintenancesOfCertainGuest(Long guestId);
+
+    List<Maintenance> sortMaintenancesByOrderDate(Long guestId);
+
+    List<Maintenance> getAllOrderedMaintenances();
 }

@@ -4,12 +4,13 @@ import com.company.api.service.IGuestService;
 import com.company.api.service.IMaintenanceService;
 import com.company.api.service.IRoomAssignmentService;
 import com.company.api.service.IRoomService;
-import com.company.api.util.ISerializeService;
 import com.company.injection.annotation.DependencyClass;
 import com.company.injection.annotation.DependencyComponent;
 import com.company.model.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 @DependencyClass
 public class Facade {
     @DependencyComponent
@@ -20,27 +21,8 @@ public class Facade {
     private IMaintenanceService maintenanceService;
     @DependencyComponent
     private IRoomAssignmentService roomAssignmentService;
-    @DependencyComponent
-    private ISerializeService serializeService;
 
     private Facade() {
-    }
-
-    public void createTestData() {
-        Guest artem = guestService.addGuest("zArtem", "Sakovich", 19);
-        Guest artem1 = guestService.addGuest("Artemc", "Sakovich", 12);
-        Guest artem2 = guestService.addGuest("bArtem", "Sakovich", 16);
-        Guest artem3 = guestService.addGuest("bArtgsem", "Sakeovich", 16);
-        Guest artem4 = guestService.addGuest("bArtffem", "Sakaovich", 16);
-
-        Room room1 = roomService.addRoom(11, 112.8, 8, 4);
-        Room room2 = roomService.addRoom(33, 14.2, 3, 1);
-        Room room3 = roomService.addRoom(36, 6.5, 1, 5);
-
-
-        Maintenance maintenance1 = maintenanceService.addMaintenance("Cleaning", 123.12, MaintenanceSection.CLEANING);
-        Maintenance maintenance2 = maintenanceService.addMaintenance("Cooking", 12.12, MaintenanceSection.FOOD);
-        Maintenance maintenance3 = maintenanceService.addMaintenance("Treatment", 1223.12, MaintenanceSection.MEDICAL);
     }
 
     public Guest addGuest(String name, String surname, Integer age) {
@@ -100,7 +82,7 @@ public class Facade {
     }
 
     public void sortFreeRoomsByCapacity() {
-        roomService.sortRoomsByNumberOfBeds().forEach(System.out::println);
+        roomService.sortFreeRoomsByNumberOfBeds().forEach(System.out::println);
     }
 
     public void sortFreeRoomsByNumberOfStars() {
@@ -116,10 +98,10 @@ public class Facade {
     }
 
     public void sortRoomsByCheckOutDate() {
-        if (roomAssignmentService.sortRoomsByCheckOutDate().isEmpty()) {
+        if (roomService.sortRoomsByCheckOutDate().isEmpty()) {
             System.out.println("All rooms are free");
         } else {
-            roomAssignmentService.sortRoomsByCheckOutDate().forEach(System.out::println);
+            roomService.sortRoomsByCheckOutDate().forEach(System.out::println);
         }
     }
 
@@ -127,7 +109,7 @@ public class Facade {
         System.out.println(roomService.getNumberOfFreeRooms());
     }
 
-    public void getNumberOfGuests() {
+    public void getNumberOfGuests()  {
         System.out.println(guestService.getNumberOfGuests());
     }
 
@@ -140,12 +122,12 @@ public class Facade {
     }
 
     public void getThreeLastGuests(Long roomId) {
-        roomService.getThreeLastGuests(roomId).forEach(System.out::println);
-        roomService.getThreeLastGuestsCheckInDates(roomId).forEach(System.out::println);
+        guestService.getThreeLastGuests(roomId).forEach(System.out::println);
+        roomAssignmentService.getThreeLastRoomAssigmentDates(roomId).forEach(System.out::println);
     }
 
     public void viewListOfMaintenancesOfCertainGuest(Long guestId) {
-        roomAssignmentService.getAllMaintenancesOfCertainGuest(guestId).forEach(System.out::println);
+        maintenanceService.getAllMaintenancesOfCertainGuest(guestId).forEach(System.out::println);
     }
 
     public void sortMaintenancesOfCertainGuestByPrice(Long guestId) {
@@ -153,7 +135,7 @@ public class Facade {
     }
 
     public void sortMaintenancesOfCertainGuestByOrderDate(Long guestId) {
-        roomAssignmentService.sortMaintenancesByOrderDate(guestId).forEach(System.out::println);
+        maintenanceService.sortMaintenancesByOrderDate(guestId).forEach(System.out::println);
     }
 
     public void sortAllMaintenancesBySectionABC() {
@@ -170,13 +152,5 @@ public class Facade {
 
     public void orderMaintenance(Long guestId, Long maintenanceIdId) {
         guestService.orderMaintenance(guestId, maintenanceIdId);
-    }
-
-    public void serialize() {
-        serializeService.serialize();
-    }
-
-    public void deserialize() {
-        serializeService.deserialize();
     }
 }

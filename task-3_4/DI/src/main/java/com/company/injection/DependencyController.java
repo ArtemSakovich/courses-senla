@@ -1,5 +1,6 @@
 package com.company.injection;
 
+import com.company.api.exceptions.DependencyException;
 import com.company.configuration.ConfigReader;
 
 import java.io.FileNotFoundException;
@@ -17,7 +18,7 @@ public class DependencyController {
         } catch (IllegalAccessException | InstantiationException | NoSuchMethodException |
                 InvocationTargetException | FileNotFoundException e) {
             log.log(Level.SEVERE, "Error when trying to set dependency!");
-            System.exit(0);
+            throw new DependencyException("Error when trying to set dependency!");
         }
     }
 }
