@@ -33,8 +33,8 @@ public class Facade {
         return maintenanceService.addMaintenance(name, price, maintenanceSection);
     }
 
-    public Room addRoom(Integer roomNumber, Double roomPrice, Integer numberOfBeds, Integer numberOfStars) {
-        return roomService.addRoom(roomNumber, roomPrice, numberOfBeds, numberOfStars);
+    public Room addRoom(Integer numberOfBeds, Integer numberOfStars, Integer roomNumber, Double roomPrice) {
+        return roomService.addRoom(numberOfBeds, numberOfStars, roomNumber, roomPrice);
     }
 
     public void evictFromRoom(Long guestId) {

@@ -3,20 +3,21 @@ package com.company.service;
 import com.company.api.dao.IGuestDao;
 import com.company.api.dao.IMaintenanceDao;
 import com.company.api.dao.IRoomAssignmentDao;
-import com.company.api.exceptions.OperationCancelledException;
 import com.company.api.service.IMaintenanceService;
-import com.company.configuration.annotation.ConfigClass;
 import com.company.injection.annotation.DependencyClass;
 import com.company.injection.annotation.DependencyComponent;
 import com.company.model.Maintenance;
 import com.company.model.MaintenanceSection;
+import com.company.model.OrderedMaintenance;
 import com.company.util.DatabaseConnector;
+import com.company.util.HibernateSessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @DependencyClass
 public class MaintenanceService implements IMaintenanceService {
@@ -28,6 +29,9 @@ public class MaintenanceService implements IMaintenanceService {
     private IRoomAssignmentDao roomAssignmentDao;
     @DependencyComponent
     private DatabaseConnector databaseConnector;
+    @DependencyComponent
+    private HibernateSessionFactory hibernateSessionFactory;
+
     private static final Logger log = Logger.getLogger(Maintenance.class.getName());
 
     private MaintenanceService() {
@@ -36,63 +40,67 @@ public class MaintenanceService implements IMaintenanceService {
 
     @Override
     public Maintenance addMaintenance(String name, Double price, MaintenanceSection section) {
-        Connection connection = databaseConnector.getConnection();
+        Session session = hibernateSessionFactory.openSession();
         Maintenance maintenance = new Maintenance(name, price, section);
-        maintenanceDao.save(connection,maintenance);
+        Transaction tx1 = session.beginTransaction();
+        maintenanceDao.save(session, maintenance);
+        tx1.commit();
+        session.close();
         return maintenance;
     }
 
     @Override
     public void changeMaintenancePrice(Long id, Double newPrice) {
-        Connection connection = databaseConnector.getConnection();
-        Maintenance maintenanceToChangePrice = maintenanceDao.getById(connection, id);
+        Session session = hibernateSessionFactory.openSession();
+        Maintenance maintenanceToChangePrice = maintenanceDao.getById(session, id);
         if (maintenanceToChangePrice == null) {
             log.log(Level.SEVERE, "Incorrect input when trying to change maintenance price");
             throw new IllegalArgumentException("Maintenance not found!");
         } else {
             maintenanceToChangePrice.setMaintenancePrice(newPrice);
-            try {
-                maintenanceDao.update(connection,maintenanceToChangePrice);
-            } catch (SQLException e) {
-                log.log(Level.SEVERE, "Connection was interrupted. Data has not been updated.");
-                throw new OperationCancelledException("Connection was interrupted. Data has not been updated.");
-            }
+            Transaction tx1 = session.beginTransaction();
+            maintenanceDao.update(session, maintenanceToChangePrice);
+            tx1.commit();
+            session.close();
         }
     }
 
     @Override
     public List<Maintenance> sortAllMaintenancesByPrice() {
-        Connection connection = databaseConnector.getConnection();
-        return maintenanceDao.getMaintenancesSortedByPrice(connection);
+        Session session = hibernateSessionFactory.openSession();
+        return maintenanceDao.getMaintenancesSortedByPrice(session);
     }
 
     @Override
     public List<Maintenance> sortAllMaintenancesBySectionABC() {
-        Connection connection = databaseConnector.getConnection();
-        return maintenanceDao.getSortedABCEntities(connection);
+        Session session = hibernateSessionFactory.openSession();
+        return maintenanceDao.getSortedABCEntities(session);
     }
 
     @Override
     public List<Maintenance> sortMaintenancesOfCertainGuestByPrice(Long guestId) {
-        Connection connection = databaseConnector.getConnection();
-        return maintenanceDao.sortMaintenancesByPrice(connection, guestId);
+        Session session = hibernateSessionFactory.openSession();
+        return maintenanceDao.sortMaintenancesOfCertainGuestByPrice(session, guestId).stream()
+                .map(OrderedMaintenance::getMaintenance).collect(Collectors.toList());
     }
 
     @Override
     public List<Maintenance> getAllMaintenancesOfCertainGuest(Long guestId) {
-        Connection connection = databaseConnector.getConnection();
-        return maintenanceDao.getAllMaintenancesOfCertainGuest(connection, guestId);
+        Session session = hibernateSessionFactory.openSession();
+        return maintenanceDao.getAllMaintenancesOfCertainGuest(session, guestId).stream()
+                .map(OrderedMaintenance::getMaintenance).collect(Collectors.toList());
     }
 
     @Override
     public List<Maintenance> sortMaintenancesByOrderDate(Long guestId) {
-        Connection connection = databaseConnector.getConnection();
-        return maintenanceDao.sortMaintenancesByOrderDate(connection, guestId);
+        Session session = hibernateSessionFactory.openSession();
+        return maintenanceDao.sortMaintenancesByOrderDate(session, guestId).stream()
+                .map(OrderedMaintenance::getMaintenance).collect(Collectors.toList());
     }
 
     @Override
     public List<Maintenance> getAllOrderedMaintenances() {
-        Connection connection = databaseConnector.getConnection();
-        return maintenanceDao.getAllOrderedMaintenances(connection);
+        Session session = hibernateSessionFactory.openSession();
+        return maintenanceDao.getAllOrderedMaintenances(session);
     }
 }

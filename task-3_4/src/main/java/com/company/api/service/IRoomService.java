@@ -3,12 +3,12 @@ package com.company.api.service;
 import com.company.model.Room;
 import com.company.model.RoomStatus;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IRoomService {
-    Room addRoom(Integer roomNumber, Double roomPrice, Integer numberOfBeds, Integer numberOfStars);
+
+    Room addRoom(Integer numberOfBeds, Integer numberOfStars, Integer roomNumber, Double roomPrice);
 
     List<Room> getAllRooms();
 

@@ -1,22 +1,26 @@
 package com.company.model;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
+@Entity
+@Table(name = "room")
 public class Room extends AEntity {
     private Integer roomNumber;
+    @Enumerated(EnumType.STRING)
     private RoomStatus roomStatus;
     private Double roomPrice;
     private Integer numberOfBeds;
     private Integer numberOfStars;
-    private transient List<RoomAssignment> roomAssignments;
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoomAssignment> roomAssignments;
 
-    public Room(Integer roomNumber, Double roomPrice, Integer numberOfBeds, Integer numberOfStars) {
-        this.roomNumber = roomNumber;
-        this.roomStatus = RoomStatus.FREE;
-        this.roomPrice = roomPrice;
+    public Room(Integer numberOfBeds, Integer numberOfStars, Integer roomNumber, Double roomPrice) {
         this.numberOfBeds = numberOfBeds;
         this.numberOfStars = numberOfStars;
+        this.roomNumber = roomNumber;
+        this.roomPrice = roomPrice;
+        this.roomStatus = RoomStatus.FREE;
     }
 
     public Room() {

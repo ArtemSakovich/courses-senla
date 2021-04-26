@@ -46,6 +46,10 @@ public class Builder {
     private ViewListOfMaintenancesOfCerainGuest viewListOfMaintenancesOfCerainGuest;
     @DependencyComponent
     private OrderMaintenance orderMaintenance;
+    @DependencyComponent
+    private SortMaintenancesOfCertainGuestByPrice sortMaintenancesOfCertainGuestByPrice;
+    @DependencyComponent
+    private SortMaintenancesOfCertainGuestByOrderDate sortMaintenancesOfCertainGuestByOrderDate;
 
     private Builder() {
         //buildMenu();
@@ -134,9 +138,9 @@ public class Builder {
     private Menu createSortMaintenanceMenu() {
         Menu sortMaintenanceMenu = new Menu();
         sortMaintenanceMenu.addMenuItem(new MenuItem("Sort maintenances of certain guest by price",
-                new SortMaintenancesOfCertainGuestByPrice(), sortMaintenanceMenu));
+                sortMaintenancesOfCertainGuestByPrice, sortMaintenanceMenu));
         sortMaintenanceMenu.addMenuItem(new MenuItem("Sort maintenances of certain guest by date of order",
-                new SortMaintenancesOfCertainGuestByOrderDate(), sortMaintenanceMenu));
+                sortMaintenancesOfCertainGuestByOrderDate, sortMaintenanceMenu));
         sortMaintenanceMenu.addMenuItem(new MenuItem("Sort all maintenances by section in alphabetical order",
                 () -> facade.sortAllMaintenancesBySectionABC(), sortMaintenanceMenu));
         sortMaintenanceMenu.addMenuItem(new MenuItem("Sort all maintenances by price",

@@ -1,19 +1,20 @@
 package com.company.api.dao;
 
 import com.company.model.Maintenance;
+import com.company.model.OrderedMaintenance;
 
-import java.sql.Connection;
+import javax.persistence.EntityManager;
 import java.util.List;
 
 public interface IMaintenanceDao extends IGenericDao<Maintenance> {
 
-    List<Maintenance> getMaintenancesSortedByPrice(Connection connection);
+    List<Maintenance> getMaintenancesSortedByPrice(EntityManager entityManager);
 
-    List<Maintenance> getAllOrderedMaintenances(Connection connection);
+    List<Maintenance> getAllOrderedMaintenances(EntityManager entityManager);
 
-    List<Maintenance> getAllMaintenancesOfCertainGuest(Connection connection, Long guestId);
+    List<OrderedMaintenance> getAllMaintenancesOfCertainGuest(EntityManager entityManager, Long guestId);
 
-    List<Maintenance> sortMaintenancesByOrderDate(Connection connection, Long guestId);
+    List<OrderedMaintenance> sortMaintenancesByOrderDate(EntityManager entityManager, Long guestId);
 
-    List<Maintenance> sortMaintenancesByPrice(Connection connection, Long guestId);
+    List<OrderedMaintenance> sortMaintenancesOfCertainGuestByPrice(EntityManager entityManager, Long guestId);
 }
