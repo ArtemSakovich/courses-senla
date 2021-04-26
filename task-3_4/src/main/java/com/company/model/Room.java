@@ -3,8 +3,7 @@ package com.company.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Room extends AEntity implements Comparable<Room> {
-
+public class Room extends AEntity {
     private Integer roomNumber;
     private RoomStatus roomStatus;
     private Double roomPrice;
@@ -18,6 +17,10 @@ public class Room extends AEntity implements Comparable<Room> {
         this.roomPrice = roomPrice;
         this.numberOfBeds = numberOfBeds;
         this.numberOfStars = numberOfStars;
+    }
+
+    public Room() {
+        roomAssignments = new ArrayList<>();
     }
 
     public Integer getRoomNumber() {
@@ -52,14 +55,8 @@ public class Room extends AEntity implements Comparable<Room> {
         this.numberOfBeds = numberOfBeds;
     }
 
-    public List<Guest> getTenants() {
-        List<Guest> tenants = new ArrayList<>();
-        for (RoomAssignment assignment : getRoomAssignments()) {
-            if (RoomAssignmentStatus.ACTIVE.equals(assignment.getRoomAssignmentStatus())) {
-                tenants.add(assignment.getGuest());
-            }
-        }
-        return tenants;
+    public void setRoomAssignments(List<RoomAssignment> roomAssignments) {
+        this.roomAssignments.addAll(roomAssignments);
     }
 
     public List<RoomAssignment> getRoomAssignments() {
@@ -69,18 +66,8 @@ public class Room extends AEntity implements Comparable<Room> {
         return roomAssignments;
     }
 
-    public void setRoomAssignment(RoomAssignment roomAssignment) {
+    public void addRoomAssignment(RoomAssignment roomAssignment) {
         getRoomAssignments().add(roomAssignment);
-    }
-
-    public List<RoomAssignment> getActiveRoomAssignments() {
-        List<RoomAssignment> activeRoomAssignments = new ArrayList<>();
-        for (RoomAssignment roomAssignment : getRoomAssignments()) {
-            if (roomAssignment.getRoomAssignmentStatus().equals(RoomAssignmentStatus.ACTIVE)) {
-                activeRoomAssignments.add(roomAssignment);
-            }
-        }
-        return activeRoomAssignments;
     }
 
     public Integer getNumberOfStars() {
@@ -123,16 +110,10 @@ public class Room extends AEntity implements Comparable<Room> {
                 room.numberOfStars.equals(numberOfStars);
     }
 
-    @Override                              // most requested sort
-    public int compareTo(Room r) {
-        return (int) (this.roomPrice - r.roomPrice);
-    }
-
     @Override
     public String toString() {
         return "Room #" + getId() + "; Room number: " + roomNumber + "; Number of stars: "
                 + numberOfStars + "; Number of beds: " + numberOfBeds +
-                "; Price: " + roomPrice + "; Status: " + roomStatus.toString() +
-                "; Number of tenants: " + getTenants().size(); // + " " + "Room ass: " + roomAssignments;
+                "; Price: " + roomPrice + "; Status: " + roomStatus.toString();
     }
 }

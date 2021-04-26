@@ -1,74 +1,79 @@
 package com.company.service;
 
 import com.company.api.dao.IRoomDao;
+import com.company.api.exceptions.OperationCancelledException;
 import com.company.api.service.IRoomService;
-import com.company.dao.RoomDao;
-import com.company.model.*;
-import com.company.util.IdGenerator;
+import com.company.configuration.annotation.ConfigClass;
+import com.company.configuration.annotation.ConfigProperty;
+import com.company.injection.annotation.DependencyClass;
+import com.company.injection.annotation.DependencyComponent;
+import com.company.model.Room;
+import com.company.model.RoomStatus;
+import com.company.util.DatabaseConnector;
+import com.company.util.PropertiesService;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
+@ConfigClass
+@DependencyClass
 public class RoomService implements IRoomService {
-    private static IRoomService instance;
-    private final IRoomDao roomDao;
+
+    @DependencyComponent
+    private IRoomDao roomDao;
+    @ConfigProperty(configName = "hoteladministrator.properties", propertyName = "isRoomStatusChangeable")
     private boolean isRoomStatusChangeable;
-    private Integer allowedNumberOfNotes = 3;
-    Logger log = Logger.getLogger(RoomService.class.getName());
+    @ConfigProperty(configName = "hoteladministrator.properties", propertyName = "allowedNumberOfNotes")
+    private int allowedNumberOfNotes;
+    @DependencyComponent
+    private DatabaseConnector databaseConnector;
+    private static final Logger log = Logger.getLogger(RoomService.class.getName());
 
     private RoomService() {
-        this.roomDao = RoomDao.getInstance();
-        try (FileInputStream input = new FileInputStream("hotelAdministrator.properties")) {
-            Properties properties = new Properties();
-            properties.load(input);
-            this.isRoomStatusChangeable = Boolean.parseBoolean(properties.getProperty("abilityToChangeRoomStatus",
-                    "false"));
-            this.allowedNumberOfNotes = Integer.parseInt(properties.getProperty("amountOfNotes"));
-        } catch (IOException e) {
-            log.log(Level.SEVERE, "Property file not found");
-        }
-    }
 
-    public static IRoomService getInstance() {
-        if (instance == null) {
-            instance = new RoomService();
-        }
-        return instance;
     }
 
     @Override
     public Room addRoom(Integer roomNumber, Double roomPrice, Integer numberOfBeds, Integer numberOfStars) {
+        Connection connection = databaseConnector.getConnection();
         Room room = new Room(roomNumber, roomPrice, numberOfBeds, numberOfStars);
-        room.setId(IdGenerator.getInstance().generateRoomId());
         room.setRoomStatus(RoomStatus.FREE);
-        roomDao.save(room);
+        roomDao.save(connection,room);
         return room;
     }
 
     @Override
-    public void update(Room updatedRoom) {
-        roomDao.update(updatedRoom);
+    public List<Room> getAllRooms() {
+        Connection connection = databaseConnector.getConnection();
+        return roomDao.getAll(connection);
     }
 
     @Override
-    public Room getById(Long id) {
-        return roomDao.getById(id);
+    public Room getById(Long roomId) {
+        Connection connection = databaseConnector.getConnection();
+        return roomDao.getById(connection, roomId);
     }
 
     @Override
     public void changeRoomStatus(Long id, RoomStatus newRoomStatus) {
+        Connection connection = databaseConnector.getConnection();
         if (isRoomStatusChangeable) {
-            Room roomToChangeStatus = roomDao.getById(id);
+            Room roomToChangeStatus = roomDao.getById(connection, id);
             if (roomToChangeStatus == null) {
                 log.log(Level.SEVERE, "Incorrect input when trying to change room status");
                 throw new IllegalArgumentException("Room not found!");
             } else {
                 roomToChangeStatus.setRoomStatus(newRoomStatus);
+                try {
+                    roomDao.update(connection, roomToChangeStatus);
+                } catch (SQLException e) {
+                    log.log(Level.SEVERE, "Connection was interrupted. Data has not been updated.");
+                    throw new OperationCancelledException("Connection was interrupted. Data has not been updated.");
+                }
             }
         } else {
             log.log(Level.SEVERE, "Error when trying to change room status");
@@ -78,25 +83,26 @@ public class RoomService implements IRoomService {
 
     @Override
     public void changeRoomPrice(Long id, Double newRoomPrice) {
-        Room roomToChangePrice = roomDao.getById(id);
+        Connection connection = databaseConnector.getConnection();
+        Room roomToChangePrice = roomDao.getById(connection, id);
         if (roomToChangePrice == null) {
             log.log(Level.SEVERE, "Incorrect input when trying to change room price");
             throw new IllegalArgumentException("Room not found!");
         } else {
             roomToChangePrice.setRoomPrice(newRoomPrice);
+            try {
+                roomDao.update(connection, roomToChangePrice);
+            } catch (SQLException e) {
+                log.log(Level.SEVERE, "Connection was interrupted. Data has not been updated.");
+                throw new OperationCancelledException("Connection was interrupted. Data has not been updated.");
+            }
         }
     }
 
     @Override
-    public List<Room> getAllRooms() {
-        return roomDao.getAll();
-    }
-
-    @Override
     public List<Room> getAllFreeRooms() {
-        return getAllRooms().stream()
-                .filter(Room::isFree)
-                .collect(Collectors.toList());
+        Connection connection = databaseConnector.getConnection();
+        return roomDao.getFreeRooms(connection);
     }
 
     @Override
@@ -106,99 +112,49 @@ public class RoomService implements IRoomService {
 
     @Override
     public List<Room> getFreeRoomsByDate(LocalDateTime requiredDate) {
-        List<Room> freeRooms = new ArrayList<>();
-        for (Room room : getAllRooms()) {
-            if (room.getRoomAssignments().isEmpty()) {
-                freeRooms.add(room);
-            } else {
-                for (RoomAssignment roomAssignment : room.getRoomAssignments()) {
-                    if (requiredDate.isAfter(roomAssignment.getCheckOutDate())) {
-                        freeRooms.add(room);
-                    }
-                }
-            }
-        }
-        return freeRooms.stream().distinct().collect(Collectors.toList());
+        Connection connection = databaseConnector.getConnection();
+        return roomDao.getFreeRoomsByDate(connection, requiredDate);
     }
 
     @Override
     public List<Room> sortRoomsByPrice() {
-        List<Room> roomsToSort = new ArrayList<>(getAllRooms());
-        Collections.sort(roomsToSort);
-        return roomsToSort;
+        Connection connection = databaseConnector.getConnection();
+        return roomDao.getRoomsSortedByPrice(connection);
     }
 
     @Override
     public List<Room> sortRoomsByNumberOfBeds() {
-        List<Room> roomsToSort = new ArrayList<>(getAllRooms());
-        roomsToSort.sort(Comparator.comparingInt(Room::getNumberOfBeds));
-        return roomsToSort;
+        Connection connection = databaseConnector.getConnection();
+        return roomDao.getRoomsSortedByNumberOfBeds(connection);
     }
 
     @Override
     public List<Room> sortRoomsByNumberOfStars() {
-        List<Room> roomsToSort = new ArrayList<>(getAllRooms());
-        roomsToSort.sort(Comparator.comparingInt(Room::getNumberOfStars));
-        return roomsToSort;
+        Connection connection = databaseConnector.getConnection();
+        return roomDao.getRoomsSortedByNumberOfStars(connection);
     }
 
     @Override
     public List<Room> sortFreeRoomsByPrice() {
-        List<Room> roomsToSort = new ArrayList<>(getAllFreeRooms());
-        Collections.sort(roomsToSort);
-        return roomsToSort;
+        Connection connection = databaseConnector.getConnection();
+        return roomDao.sortFreeRoomsByPrice(connection);
     }
 
     @Override
     public List<Room> sortFreeRoomsByNumberOfBeds() {
-        List<Room> roomsToSort = new ArrayList<>(getAllFreeRooms());
-        roomsToSort.sort(Comparator.comparingInt(Room::getNumberOfBeds));
-        return roomsToSort;
+        Connection connection = databaseConnector.getConnection();
+        return roomDao.sortFreeRoomsByNumberOfBeds(connection);
     }
 
     @Override
     public List<Room> sortFreeRoomsByNumberOfStars() {
-        List<Room> roomsToSort = new ArrayList<>(getAllFreeRooms());
-        roomsToSort.sort(Comparator.comparingInt(Room::getNumberOfStars));
-        return roomsToSort;
+        Connection connection = databaseConnector.getConnection();
+        return roomDao.sortFreeRoomsByNumberOfStars(connection);
     }
 
     @Override
-    public List<RoomAssignment> getThreeLastRoomAssigment(Long roomId) {
-        return roomDao.getById(roomId).getRoomAssignments().stream()
-                .sorted(Comparator.comparing(RoomAssignment::getCreatedOn).reversed())
-                .limit(allowedNumberOfNotes).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Guest> getThreeLastGuests(Long roomId) {
-        Room roomToGetGuests = roomDao.getById(roomId);
-        if (roomToGetGuests == null) {
-            log.log(Level.SEVERE, "Incorrect input when trying to get three last guests");
-            throw new IllegalArgumentException("Room not found");
-        } else {
-            List<Guest> threeLastGuests = new ArrayList<>();
-            for (RoomAssignment roomAssignment : getThreeLastRoomAssigment(roomToGetGuests.getId())) {
-                threeLastGuests.add(roomAssignment.getGuest());
-            }
-            return threeLastGuests;
-        }
-    }
-
-
-    @Override
-    public List<String> getThreeLastGuestsCheckInDates(Long roomId) {
-        Room roomToGetGuests = roomDao.getById(roomId);
-        if (roomToGetGuests == null) {
-            log.log(Level.SEVERE, "Incorrect input when trying to get three last dates of staying");
-            throw new IllegalArgumentException("Room not found");
-        } else {
-            List<String> threeLastGuestsCheckInDates = new ArrayList<>();
-            for (RoomAssignment roomAssignment : getThreeLastRoomAssigment(roomToGetGuests.getId())) {
-                threeLastGuestsCheckInDates.add("From: " + roomAssignment.getCheckInDate().toLocalDate()
-                        + " To: " + roomAssignment.getCheckOutDate().toLocalDate());
-            }
-            return threeLastGuestsCheckInDates;
-        }
+    public List<Room> sortRoomsByCheckOutDate() {
+        Connection connection = databaseConnector.getConnection();
+        return roomDao.sortRoomsByCheckOutDate(connection);
     }
 }

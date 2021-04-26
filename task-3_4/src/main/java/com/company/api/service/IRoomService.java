@@ -1,25 +1,22 @@
 package com.company.api.service;
 
-import com.company.model.Guest;
 import com.company.model.Room;
-import com.company.model.RoomAssignment;
 import com.company.model.RoomStatus;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IRoomService {
     Room addRoom(Integer roomNumber, Double roomPrice, Integer numberOfBeds, Integer numberOfStars);
 
-    void update(Room updatedRoom);
+    List<Room> getAllRooms();
 
-    Room getById(Long id);
+    Room getById(Long roomId);
 
     void changeRoomStatus(Long id, RoomStatus newRoomStatus);
 
     void changeRoomPrice(Long id, Double newRoomPrice);
-
-    List<Room> getAllRooms();
 
     List<Room> getAllFreeRooms();
 
@@ -39,9 +36,5 @@ public interface IRoomService {
 
     List<Room> sortFreeRoomsByNumberOfStars();
 
-    List<RoomAssignment> getThreeLastRoomAssigment(Long roomId);
-
-    List<Guest> getThreeLastGuests(Long roomId);
-
-    List<String> getThreeLastGuestsCheckInDates(Long roomId);
+    List<Room> sortRoomsByCheckOutDate();
 }

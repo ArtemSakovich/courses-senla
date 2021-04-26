@@ -3,17 +3,20 @@ package com.company.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Guest extends AEntity implements Comparable<Guest> {
-
+public class Guest extends AEntity {
     private String name;
     private String surname;
     private Integer age;
-    private transient List<RoomAssignment> roomAssignments;
+    private List<RoomAssignment> roomAssignments;
 
     public Guest(String name, String surname, Integer age) {
         this.name = name;
         this.surname = surname;
         this.age = age;
+    }
+
+    public Guest() {
+        roomAssignments = new ArrayList<>();
     }
 
     public String getName() {
@@ -41,24 +44,15 @@ public class Guest extends AEntity implements Comparable<Guest> {
     }
 
     public List<RoomAssignment> getRoomAssignments() {
-        if (roomAssignments == null) {
-            roomAssignments = new ArrayList<>();
-        }
         return roomAssignments;
     }
 
-    public void setRoomAssignment(RoomAssignment roomAssignment) {
-        getRoomAssignments().add(roomAssignment);
+    public void setRoomAssignments(List<RoomAssignment> roomAssignments) {
+        this.roomAssignments.addAll(roomAssignments);
     }
 
-    public List<RoomAssignment> getActiveRoomAssignments() {
-        List<RoomAssignment> activeRoomAssignments = new ArrayList<>();
-        for (RoomAssignment roomAssignment : getRoomAssignments()) {
-            if (roomAssignment.getRoomAssignmentStatus().equals(RoomAssignmentStatus.ACTIVE)) {
-                activeRoomAssignments.add(roomAssignment);
-            }
-        }
-        return activeRoomAssignments;
+    public void addRoomAssignment(RoomAssignment roomAssignment) {
+        roomAssignments.add(roomAssignment);
     }
 
     @Override
@@ -83,13 +77,6 @@ public class Guest extends AEntity implements Comparable<Guest> {
         return guest.name.equals(name) &&
                 guest.surname.equals(surname) &&
                 guest.age.equals(age);
-    }
-
-    @Override
-    public int compareTo(Guest g) {                 // most requested sort
-        String thisFullName = this.name + this.surname;
-        String gFullName = g.name + g.surname;
-        return thisFullName.toLowerCase().compareTo(gFullName.toLowerCase());
     }
 
     @Override

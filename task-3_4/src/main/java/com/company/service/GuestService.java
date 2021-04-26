@@ -6,79 +6,90 @@ import com.company.api.dao.IRoomAssignmentDao;
 import com.company.api.dao.IRoomDao;
 import com.company.api.exceptions.OperationCancelledException;
 import com.company.api.service.IGuestService;
-import com.company.dao.GuestDao;
-import com.company.dao.MaintenanceDao;
-import com.company.dao.RoomAssignmentDao;
-import com.company.dao.RoomDao;
+import com.company.api.service.IRoomAssignmentService;
+import com.company.injection.annotation.DependencyClass;
+import com.company.injection.annotation.DependencyComponent;
 import com.company.model.*;
-import com.company.util.IdGenerator;
+import com.company.util.DatabaseConnector;
 
-import java.time.LocalDate;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@DependencyClass
 public class GuestService implements IGuestService {
+    @DependencyComponent
+    private IGuestDao guestDao;
+    @DependencyComponent
+    private IRoomDao roomDao;
+    @DependencyComponent
+    private IRoomAssignmentDao roomAssignmentDao;
+    @DependencyComponent
+    private IMaintenanceDao maintenanceDao;
+    @DependencyComponent
+    private IRoomAssignmentService roomAssignmentService;
+    @DependencyComponent
+    private DatabaseConnector databaseConnector;
 
-    private static IGuestService instance;
-    private final IGuestDao guestDao;
-    private final IRoomDao roomDao;
-    private final IRoomAssignmentDao roomAssignmentDao;
-    private final IMaintenanceDao maintenanceDao;
-    Logger log = Logger.getLogger(GuestService.class.getName());
+    private static final Logger log = Logger.getLogger(GuestService.class.getName());
 
     private GuestService() {
-        this.guestDao = GuestDao.getInstance();
-        this.roomDao = RoomDao.getInstance();
-        this.maintenanceDao = MaintenanceDao.getInstance();
-        this.roomAssignmentDao = RoomAssignmentDao.getInstance();
+
     }
 
-    public static IGuestService getInstance() {
-        if (instance == null) {
-            instance = new GuestService();
-        }
-        return instance;
-    }
-
+    /**
+     * The method is called by the execute() method from AddGuest[Action] class. Receives from it, the first name,
+     * last name and age of the guest entered by the user through the console. A new object of the guest type is
+     * created, and the same parameters are passed to its constructor. Also, guests ID is generated and sets to
+     * new guest, after which the new guest will be saved in the DAO repository. The method returns a new guest object.
+     * @param name guest's name
+     * @param surname guest's surname
+     * @param age guest's age
+     * @return new guest object
+     */
     @Override
     public Guest addGuest(String name, String surname, Integer age) {
+        Connection connection = databaseConnector.getConnection();
         Guest guest = new Guest(name, surname, age);
-        guest.setId(IdGenerator.getInstance().generateGuestId());
-        guestDao.save(guest);
+        guestDao.save(connection, guest);
         return guest;
     }
 
-    @Override
-    public void update(Guest updatedGuest) {
-        guestDao.update(updatedGuest);
-    }
-
-    @Override
-    public Guest getById(Long id) {
-        return guestDao.getById(id);
-    }
-
     public void accommodateToRoom(Long guestId, Long roomId, LocalDateTime checkOutDate) {
-        Guest guestToFlip = guestDao.getById(guestId);
-        Room roomToFlip = roomDao.getById(roomId);
+        Connection connection = databaseConnector.getConnection();
+        Guest guestToFlip = guestDao.getById(connection, guestId);
+        Room roomToFlip = roomDao.getById(connection, roomId);
         if (guestToFlip == null || roomToFlip == null) {
             log.log(Level.SEVERE, "Incorrect input when trying to accommodate a guest");
             throw new IllegalArgumentException("Guest or room not found");
         }
         if (roomToFlip.getRoomStatus().equals(RoomStatus.FREE)) {
-            RoomAssignment roomAssignment = new RoomAssignment(roomToFlip, guestToFlip, LocalDateTime.now(), checkOutDate,
-                    RoomAssignmentStatus.ACTIVE);
-            roomAssignment.setId(IdGenerator.getInstance().generateRoomAssignmentId());
-            roomToFlip.setRoomAssignment(roomAssignment);
-            guestToFlip.setRoomAssignment(roomAssignment);
-            roomAssignmentDao.save(roomAssignment);
-            if (roomToFlip.getNumberOfBeds().equals(roomToFlip.getTenants().size())) {
+            RoomAssignment roomAssignment = new RoomAssignment(roomToFlip.getId(), guestToFlip.getId(),
+                    Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(checkOutDate), RoomAssignmentStatus.ACTIVE);
+            roomToFlip.addRoomAssignment(roomAssignment);
+            guestToFlip.addRoomAssignment(roomAssignment);
+            roomAssignmentDao.save(connection, roomAssignment);
+            if (roomToFlip.getNumberOfBeds().equals(
+                    roomAssignmentDao.getActiveRoomAssignmentsByRoomId(connection,
+                            roomToFlip.getId()).size())) {
                 roomToFlip.setRoomStatus(RoomStatus.OCCUPIED);
+                try {
+                    guestDao.update(connection, guestToFlip);
+                    roomDao.update(connection, roomToFlip);
+                    connection.commit();
+                } catch (SQLException e) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex) {
+                        log.log(Level.SEVERE, "Connection rollback has thrown an error", ex);
+                    }
+                    rollbackAnnouncer();
+                }
             }
         } else {
             log.log(Level.SEVERE, "Failed to accommodate guest to room");
@@ -89,7 +100,8 @@ public class GuestService implements IGuestService {
 
     @Override
     public void evictFromRoom(Long guestId){
-        Guest guestToEvict = guestDao.getById(guestId);
+        Connection connection = databaseConnector.getConnection();
+        Guest guestToEvict = guestDao.getById(connection, guestId);
         if (guestToEvict == null) {
             log.log(Level.SEVERE, "Incorrect input when trying to evict guest from room");
             throw new IllegalArgumentException("Guest not found");
@@ -97,9 +109,23 @@ public class GuestService implements IGuestService {
             guestToEvict.getRoomAssignments().stream()
                     .filter(a -> RoomAssignmentStatus.ACTIVE.equals(a.getRoomAssignmentStatus()))
                     .findAny().ifPresentOrElse(roomAssignment -> {
-                        roomAssignment.getRoom().setRoomStatus(RoomStatus.FREE);
+                        Room roomToEvictFrom = roomDao.getById(connection, roomAssignment.getRoomId());
+                        roomToEvictFrom.setRoomStatus(RoomStatus.FREE);
                         roomAssignment.setRoomAssignmentStatus(RoomAssignmentStatus.CLOSED);
-                        roomAssignment.setCheckOutDate(LocalDateTime.now());
+                        roomAssignment.setCheckOutDate(Timestamp.valueOf(LocalDateTime.now()));
+                        try {
+                            guestDao.update(connection, guestToEvict);
+                            roomDao.update(connection, roomToEvictFrom);
+                            roomAssignmentDao.update(connection, roomAssignment);
+                            connection.commit();
+                        } catch (SQLException e) {
+                            try {
+                                connection.rollback();
+                            } catch (SQLException ex) {
+                                log.log(Level.SEVERE, "Connection rollback has thrown an error", ex);
+                            }
+                            rollbackAnnouncer();
+                        }
                     },
                     () -> {
                         log.log(Level.SEVERE, "Failed to evict guest from room");
@@ -110,17 +136,32 @@ public class GuestService implements IGuestService {
 
     @Override
     public void orderMaintenance(Long guestId, Long maintenanceId){
-        Guest guestToOrderMaintenance = guestDao.getById(guestId);
-        Maintenance maintenanceToOrder = maintenanceDao.getById(maintenanceId);
+        Connection connection = databaseConnector.getConnection();
+        Guest guestToOrderMaintenance = guestDao.getById(connection, guestId);
+        Maintenance maintenanceToOrder = maintenanceDao.getById(connection, maintenanceId);
         if (guestToOrderMaintenance == null || maintenanceToOrder == null) {
             log.log(Level.SEVERE, "Incorrect input when trying to order maintenance");
             throw new IllegalArgumentException("Guest or maintenance not found");
         } else {
-            guestToOrderMaintenance.getActiveRoomAssignments().stream()
-                    .findAny().ifPresentOrElse(roomAssignment -> {
-                        maintenanceToOrder.setOrderDate(LocalDate.now());
-                        roomAssignment.setMaintenance(maintenanceToOrder);
-                    },
+                roomAssignmentDao.getActiveRoomAssignmentsByGuestId(connection,
+                        guestToOrderMaintenance.getId()).stream()
+                        .findAny().ifPresentOrElse(roomAssignment -> {
+                        maintenanceToOrder.setOrderDate(Timestamp.valueOf(LocalDateTime.now()));
+                        roomAssignment.addMaintenance(maintenanceToOrder);
+                            try {
+                                guestDao.update(connection, guestToOrderMaintenance);
+                                maintenanceDao.update(connection,maintenanceToOrder);
+                                roomAssignmentDao.update(connection,roomAssignment);
+                                connection.commit();
+                            } catch (SQLException e) {
+                                try {
+                                    connection.rollback();
+                                } catch (SQLException ex) {
+                                    log.log(Level.SEVERE, "Connection rollback has thrown an error", ex);
+                                }
+                                rollbackAnnouncer();
+                            }
+                        },
                     () -> {
                         log.log(Level.SEVERE, "Failed to order maintenance");
                         throw new OperationCancelledException("Guest does not live in the hotel");
@@ -130,15 +171,18 @@ public class GuestService implements IGuestService {
 
     @Override
     public Double getAmountOfPaymentForTheRoom(Long guestId) {
-        Guest guestToGetAmount = guestDao.getById(guestId);
+        Connection connection = databaseConnector.getConnection();
+        Guest guestToGetAmount = guestDao.getById(connection, guestId);
         if (guestToGetAmount == null) {
             log.log(Level.SEVERE, "Incorrect input when trying to get amount of payment for room");
             throw new IllegalArgumentException("Guest not found");
         } else {
             Double amountOfPaymentForTheRoom = 0.0;
-            if (!guestToGetAmount.getActiveRoomAssignments().isEmpty()) {
-                for (RoomAssignment roomAssignment : guestToGetAmount.getActiveRoomAssignments()) {
-                    amountOfPaymentForTheRoom = roomAssignment.getPricePerStay();
+            if (!roomAssignmentDao.getActiveRoomAssignmentsByGuestId(connection,
+                    guestToGetAmount.getId()).isEmpty()) {
+                for (RoomAssignment roomAssignment : roomAssignmentDao.getActiveRoomAssignmentsByGuestId(databaseConnector.getConnection(),
+                        guestToGetAmount.getId())) {
+                    amountOfPaymentForTheRoom = roomAssignmentService.getPricePerStay(roomAssignment);
                 }
             }
             return amountOfPaymentForTheRoom;
@@ -147,14 +191,17 @@ public class GuestService implements IGuestService {
 
     @Override
     public List<Guest> getAllGuests() {
-        return guestDao.getAll();
+        Connection connection = databaseConnector.getConnection();
+        return guestDao.getAll(connection);
     }
 
     @Override
     public Integer getNumberOfGuests() {
+        Connection connection = databaseConnector.getConnection();
         int totalNumberOfGuest = 0;
         for (Guest guest : getAllGuests()) {
-            if(!guest.getActiveRoomAssignments().isEmpty()) {
+            if(!roomAssignmentDao.getActiveRoomAssignmentsByGuestId(connection,
+                    guest.getId()).isEmpty()) {
                 totalNumberOfGuest++;
             }
         }
@@ -162,9 +209,19 @@ public class GuestService implements IGuestService {
     }
 
     @Override
+    public List<Guest> getThreeLastGuests(Long roomId) {
+        Connection connection = databaseConnector.getConnection();
+        return guestDao.getThreeLastGuests(connection, roomId);
+    }
+
+    @Override
     public List<Guest> sortGuestsABC() {
-        List<Guest> guestsToSort = new ArrayList<>(getAllGuests());
-        Collections.sort(guestsToSort);
-        return guestsToSort;
+        Connection connection = databaseConnector.getConnection();
+        return guestDao.getSortedABCEntities(connection);
+    }
+
+    private void rollbackAnnouncer() {
+        log.log(Level.SEVERE, "Connection was interrupted. Data has been rolled back.");
+        throw new OperationCancelledException("Connection was interrupted. Data has been rolled back.");
     }
 }

@@ -1,18 +1,21 @@
 package com.company.model;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 public class Maintenance extends AEntity {
 
     private String maintenanceName;
     private Double maintenancePrice;
     private MaintenanceSection maintenanceSection;
-    private LocalDate orderDate;
+    private Timestamp orderDate;
 
     public Maintenance(String maintenanceName, Double maintenancePrice, MaintenanceSection maintenanceSection) {
         this.maintenanceName = maintenanceName;
         this.maintenancePrice = maintenancePrice;
         this.maintenanceSection = maintenanceSection;
+    }
+
+    public Maintenance() {
     }
 
     public String getMaintenanceName() {
@@ -35,19 +38,15 @@ public class Maintenance extends AEntity {
         return maintenanceSection;
     }
 
-    public String getMaintenanceSectionAsString() {
-        return maintenanceSection.toString();
-    }
-
     public void setMaintenanceSection(MaintenanceSection maintenanceSection) {
         this.maintenanceSection = maintenanceSection;
     }
 
-    public LocalDate getOrderDate() {
+    public Timestamp getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(LocalDate orderDate) {
+    public void setOrderDate(Timestamp orderDate) {
         this.orderDate = orderDate;
     }
 

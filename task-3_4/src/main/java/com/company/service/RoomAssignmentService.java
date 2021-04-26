@@ -2,105 +2,50 @@ package com.company.service;
 
 import com.company.api.dao.IGuestDao;
 import com.company.api.dao.IRoomAssignmentDao;
+import com.company.api.dao.IRoomDao;
 import com.company.api.service.IRoomAssignmentService;
-import com.company.dao.GuestDao;
-import com.company.dao.RoomAssignmentDao;
-import com.company.model.Guest;
+import com.company.injection.annotation.DependencyClass;
+import com.company.injection.annotation.DependencyComponent;
 import com.company.model.Maintenance;
-import com.company.model.Room;
 import com.company.model.RoomAssignment;
+import com.company.util.DatabaseConnector;
 
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.sql.Connection;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
+@DependencyClass
 public class RoomAssignmentService implements IRoomAssignmentService {
-
-    private static IRoomAssignmentService instance;
-    private final IRoomAssignmentDao roomAssignmentDao;
-    private final IGuestDao guestDao;
-    Logger log = Logger.getLogger(RoomAssignmentService.class.getName());
+    @DependencyComponent
+    private IRoomAssignmentDao roomAssignmentDao;
+    @DependencyComponent
+    private IGuestDao guestDao;
+    @DependencyComponent
+    private IRoomDao roomDao;
+    @DependencyComponent
+    private DatabaseConnector databaseConnector;
+    private static final Logger log = Logger.getLogger(RoomAssignmentService.class.getName());
 
     private RoomAssignmentService() {
-        this.roomAssignmentDao = RoomAssignmentDao.getInstance();
-        this.guestDao = GuestDao.getInstance();
     }
 
-    public static IRoomAssignmentService getInstance() {
-        if (instance == null) {
-            instance = new RoomAssignmentService();
+    @Override
+    public Double getPricePerStay(RoomAssignment roomAssignment) {
+        Connection connection = databaseConnector.getConnection();
+        Double totalMaintenancePrice = 0.0;
+        for (Maintenance maintenance : roomAssignment.getMaintenances()) {
+            totalMaintenancePrice += maintenance.getMaintenancePrice();
         }
-        return instance;
+        return roomDao.getById(connection, roomAssignment.getRoomId()).getRoomPrice() * DAYS.between(roomAssignment.getCheckInDate().toLocalDateTime(),
+                roomAssignment.getCheckOutDate().toLocalDateTime()) + totalMaintenancePrice;
     }
 
     @Override
-    public void update(RoomAssignment updatedRoomAssignment) {
-        roomAssignmentDao.update(updatedRoomAssignment);
-    }
-
-    @Override
-    public RoomAssignment getById(Long id) {
-        return roomAssignmentDao.getById(id);
-    }
-
-    @Override
-    public List<RoomAssignment> getAllAssignments() {
-        return roomAssignmentDao.getAll();
-    }
-
-    @Override
-    public List<List<Maintenance>> getAllOrderedMaintenances() {
-        return getAllAssignments().stream()
-                .map(RoomAssignment::getMaintenances)
-                .filter(maintenances -> !(maintenances.isEmpty()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Maintenance> getAllMaintenancesOfCertainGuest(Long guestId) {
-        Guest guestToViewMaintenances = guestDao.getById(guestId);
-        if (guestToViewMaintenances == null) {
-            log.log(Level.SEVERE, "Incorrect input when trying to get all maintenances of certain guest");
-            throw new IllegalArgumentException("Guest not found!");
-        } else {
-            List<Maintenance> allMaintenancesOfCertainGuest = new ArrayList<>();
-            for (RoomAssignment roomAssignment : guestToViewMaintenances.getActiveRoomAssignments()) {
-                allMaintenancesOfCertainGuest.addAll(roomAssignment.getMaintenances());
-            }
-            return allMaintenancesOfCertainGuest;
-        }
-    }
-
-    @Override
-    public List<Maintenance> sortMaintenancesByOrderDate (Long guestId) {
-        Guest guestToViewMaintenances = guestDao.getById(guestId);
-        if (guestToViewMaintenances == null) {
-            log.log(Level.SEVERE, "Incorrect input when trying to sort maintenances by date of order");
-            throw new IllegalArgumentException("Guest not found!");
-        } else {
-            List<Maintenance> maintenancesToSort = new ArrayList<>(getAllMaintenancesOfCertainGuest(guestToViewMaintenances.getId()));
-            maintenancesToSort.sort(Comparator.comparing(Maintenance::getOrderDate));
-            return maintenancesToSort;
-        }
-    }
-
-    @Override
-    public List<Room> sortRoomsByCheckOutDate() {
-        return getAllAssignments().stream()
-                .sorted(Comparator.comparing(RoomAssignment::getCheckOutDate))
-                .map(RoomAssignment::getRoom)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void completeDeserialization() {
-        for (RoomAssignment roomAssignment : RoomAssignmentDao.getInstance().getAll()) {
-            roomAssignment.getRoom().setRoomAssignment(roomAssignment);
-            roomAssignment.getGuest().setRoomAssignment(roomAssignment);
-        }
+    public List<String> getThreeLastRoomAssigmentDates(Long roomId) {
+        Connection connection = databaseConnector.getConnection();
+        return roomAssignmentDao.getThreeLastRoomAssigmentDates(connection, roomId);
     }
 
 }
