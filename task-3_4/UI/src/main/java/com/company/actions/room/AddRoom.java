@@ -27,6 +27,6 @@ public class AddRoom implements IAction {
         numberOfBeds = Integer.parseInt(input.nextLine());
         System.out.print("Please enter number of stars: ");
         numberOfStars = Integer.parseInt(input.nextLine());
-        System.out.println("Room has been added: " + facade.addRoom(roomNumber, roomPrice, numberOfBeds, numberOfStars));
+        System.out.println("Room has been added: " + facade.addRoom(numberOfBeds, numberOfStars, roomNumber, roomPrice));
     }
 }

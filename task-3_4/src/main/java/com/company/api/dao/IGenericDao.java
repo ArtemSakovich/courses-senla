@@ -2,21 +2,22 @@ package com.company.api.dao;
 
 import com.company.model.AEntity;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import javax.persistence.EntityManager;
 import java.util.List;
 
 public interface IGenericDao<T extends AEntity> {
 
-    T getById(Connection connection, Long id);
+    T getById(EntityManager entityManager, Long id);
 
-    List<T> getAll(Connection connection);
+    List<T> getAll(EntityManager entityManager);
 
-    void save(Connection connection, T entity);
+    void save(EntityManager entityManager, T entity);
 
-    void update(Connection connection, T updatedEntity) throws SQLException;
+    void update(EntityManager entityManager, T updatedEntity);
 
-    void delete(Connection connection, T entity);
+    void delete(EntityManager entityManager, T entity);
 
-    List<T> getSortedABCEntities(Connection connection);
+    List<T> getSortedABCEntities(EntityManager entityManager);
+
+    List<T> getSortedEntities(EntityManager entityManager, String sortParam);
 }

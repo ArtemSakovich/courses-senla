@@ -1,47 +1,54 @@
 package com.company.model;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+@Entity
+@Table(name = "roomassignment")
 public class RoomAssignment extends AEntity {
-    private Long roomId;
-    private Long guestId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "roomId")
+    private Room room;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "guestId")
+    private Guest guest;
     private Timestamp checkInDate;
     private Timestamp checkOutDate;
+    @Enumerated(EnumType.STRING)
     private RoomAssignmentStatus roomAssignmentStatus;
     private Timestamp createdOn;
-    private List<Maintenance> maintenances = new ArrayList<>();
+    @OneToMany(mappedBy = "roomAssignment")
+    private List<OrderedMaintenance> maintenances = new ArrayList<>();
 
-    public RoomAssignment(Long roomId, Long guestId, Timestamp checkInDate, Timestamp checkOutDate,
-                          RoomAssignmentStatus roomAssignmentStatus) {
-        this.roomId = roomId;
-        this.guestId = guestId;
+    public RoomAssignment(Room room, Guest guest, Timestamp checkInDate, Timestamp checkOutDate,
+                          RoomAssignmentStatus roomAssignmentStatus, Timestamp createdOn) {
+        this.room = room;
+        this.guest = guest;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.roomAssignmentStatus = roomAssignmentStatus;
-        this.createdOn = Timestamp.valueOf(LocalDateTime.now());
+        this.createdOn = createdOn;
     }
 
     public RoomAssignment() {
         maintenances = new ArrayList<>();
     }
 
-    public Long getRoomId() {
-        return roomId;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setRoomId(Long roomId) {
-        this.roomId = roomId;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
-    public Long getGuestId() {
-        return guestId;
+    public Guest getGuest() {
+        return guest;
     }
 
-    public void setGuestId(Long guestId) {
-        this.guestId = guestId;
+    public void setGuest(Guest guest) {
+        this.guest = guest;
     }
 
     public Timestamp getCheckInDate() {
@@ -76,15 +83,15 @@ public class RoomAssignment extends AEntity {
         this.createdOn = createdOn;
     }
 
-    public List<Maintenance> getMaintenances() {
+    public List<OrderedMaintenance> getMaintenances() {
         return maintenances;
     }
 
-    public void setMaintenances(List<Maintenance> maintenances) {
+    public void setMaintenances(List<OrderedMaintenance> maintenances) {
         this.maintenances = maintenances;
     }
 
-    public void addMaintenance(Maintenance maintenance) {
+    public void addMaintenance(OrderedMaintenance maintenance) {
         maintenances.add(maintenance);
     }
 

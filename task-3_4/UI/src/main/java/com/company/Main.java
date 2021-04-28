@@ -1,6 +1,8 @@
 package com.company;
 
 import com.company.menu.MenuController;
+import com.company.model.Guest;
+import com.company.service.GuestService;
 import com.company.util.ApplicationContext;
 
 import java.io.IOException;

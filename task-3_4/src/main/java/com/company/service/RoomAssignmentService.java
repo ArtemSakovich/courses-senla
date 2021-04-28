@@ -7,10 +7,12 @@ import com.company.api.service.IRoomAssignmentService;
 import com.company.injection.annotation.DependencyClass;
 import com.company.injection.annotation.DependencyComponent;
 import com.company.model.Maintenance;
+import com.company.model.OrderedMaintenance;
 import com.company.model.RoomAssignment;
 import com.company.util.DatabaseConnector;
+import com.company.util.HibernateSessionFactory;
+import org.hibernate.Session;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -26,6 +28,9 @@ public class RoomAssignmentService implements IRoomAssignmentService {
     private IRoomDao roomDao;
     @DependencyComponent
     private DatabaseConnector databaseConnector;
+    @DependencyComponent
+    private HibernateSessionFactory hibernateSessionFactory;
+
     private static final Logger log = Logger.getLogger(RoomAssignmentService.class.getName());
 
     private RoomAssignmentService() {
@@ -33,19 +38,19 @@ public class RoomAssignmentService implements IRoomAssignmentService {
 
     @Override
     public Double getPricePerStay(RoomAssignment roomAssignment) {
-        Connection connection = databaseConnector.getConnection();
+        Session session = hibernateSessionFactory.openSession();
         Double totalMaintenancePrice = 0.0;
-        for (Maintenance maintenance : roomAssignment.getMaintenances()) {
-            totalMaintenancePrice += maintenance.getMaintenancePrice();
+        for (OrderedMaintenance maintenance : roomAssignment.getMaintenances()) {
+            totalMaintenancePrice += maintenance.getMaintenance().getMaintenancePrice();
         }
-        return roomDao.getById(connection, roomAssignment.getRoomId()).getRoomPrice() * DAYS.between(roomAssignment.getCheckInDate().toLocalDateTime(),
+        return roomDao.getById(session, roomAssignment.getRoom().getId()).getRoomPrice() * DAYS.between(roomAssignment.getCheckInDate().toLocalDateTime(),
                 roomAssignment.getCheckOutDate().toLocalDateTime()) + totalMaintenancePrice;
     }
 
     @Override
     public List<String> getThreeLastRoomAssigmentDates(Long roomId) {
-        Connection connection = databaseConnector.getConnection();
-        return roomAssignmentDao.getThreeLastRoomAssigmentDates(connection, roomId);
+        Session session = hibernateSessionFactory.openSession();
+        return roomAssignmentDao.getThreeLastRoomAssigmentDates(session, roomId);
     }
 
 }

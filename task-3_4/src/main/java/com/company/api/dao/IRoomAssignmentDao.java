@@ -2,14 +2,14 @@ package com.company.api.dao;
 
 import com.company.model.RoomAssignment;
 
-import java.sql.Connection;
+import javax.persistence.EntityManager;
 import java.util.List;
 
 public interface IRoomAssignmentDao extends IGenericDao<RoomAssignment> {
 
-    List<String> getThreeLastRoomAssigmentDates(Connection connection, Long roomId);
+    List<String> getThreeLastRoomAssigmentDates(EntityManager entityManager, Long roomId);
 
-    List<RoomAssignment> getActiveRoomAssignmentsByGuestId(Connection connection, Long guestId);
+    List<RoomAssignment> getActiveRoomAssignmentsByGuestId(EntityManager entityManager, Long guestId);
 
-    List<RoomAssignment> getActiveRoomAssignmentsByRoomId(Connection connection, Long roomId);
+    List<RoomAssignment> getActiveRoomAssignmentsByRoomId(EntityManager entityManager, Long roomId);
 }

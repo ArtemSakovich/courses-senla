@@ -1,12 +1,18 @@
 package com.company.model;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-
+@Entity
+@Table(name = "guest")
 public class Guest extends AEntity {
     private String name;
     private String surname;
     private Integer age;
+    @OneToMany(mappedBy = "guest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoomAssignment> roomAssignments;
 
     public Guest(String name, String surname, Integer age) {

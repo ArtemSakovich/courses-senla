@@ -1,13 +1,15 @@
 package com.company.model;
 
-import java.sql.Timestamp;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "maintenance")
 public class Maintenance extends AEntity {
 
     private String maintenanceName;
     private Double maintenancePrice;
+    @Enumerated(EnumType.STRING)
     private MaintenanceSection maintenanceSection;
-    private Timestamp orderDate;
 
     public Maintenance(String maintenanceName, Double maintenancePrice, MaintenanceSection maintenanceSection) {
         this.maintenanceName = maintenanceName;
@@ -40,14 +42,6 @@ public class Maintenance extends AEntity {
 
     public void setMaintenanceSection(MaintenanceSection maintenanceSection) {
         this.maintenanceSection = maintenanceSection;
-    }
-
-    public Timestamp getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(Timestamp orderDate) {
-        this.orderDate = orderDate;
     }
 
     @Override
