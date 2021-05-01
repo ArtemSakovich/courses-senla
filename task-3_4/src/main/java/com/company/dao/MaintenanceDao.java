@@ -1,13 +1,14 @@
 package com.company.dao;
 
 import com.company.api.dao.IMaintenanceDao;
-import com.company.injection.annotation.DependencyClass;
 import com.company.model.Maintenance;
 import com.company.model.OrderedMaintenance;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-@DependencyClass
+
+@Repository
 public class MaintenanceDao extends AbstractDao<Maintenance> implements IMaintenanceDao {
 
     @Override
@@ -16,15 +17,8 @@ public class MaintenanceDao extends AbstractDao<Maintenance> implements IMainten
     }
 
     @Override
-    protected String getColumnNameForABCSort() {
-        final String MAINTENANCE_COLUMN_NAME_FOR_ABC_SORT = "maintenanceSection";
-        return MAINTENANCE_COLUMN_NAME_FOR_ABC_SORT;
-    }
-
-    @Override
-    public List<Maintenance> getMaintenancesSortedByPrice(EntityManager entityManager) {
-        String SORT_BY_PRICE_PARAM = "maintenancePrice";
-        return getSortedEntities(entityManager, SORT_BY_PRICE_PARAM);
+    public List<Maintenance> getSortedMaintenances(EntityManager entityManager, String paramToSort) {
+        return getSortedEntities(entityManager, paramToSort);
     }
 
     @Override
@@ -40,16 +34,9 @@ public class MaintenanceDao extends AbstractDao<Maintenance> implements IMainten
     }
 
     @Override
-    public List<OrderedMaintenance> sortMaintenancesByOrderDate(EntityManager entityManager, Long guestId) {
-        String SELECT_ALL_MAINTENANCES_OF_CERTAIN_GUEST_SORTED_BY_ORDER_DATE = "select ra.maintenances FROM" +
-                " RoomAssignment ra inner join OrderedMaintenance om on ra.id = om.roomAssignment.id where ra.guest.id = :guestId order by om.orderDate";
-        return entityManager.createQuery(SELECT_ALL_MAINTENANCES_OF_CERTAIN_GUEST_SORTED_BY_ORDER_DATE).setParameter("guestId", guestId).getResultList();
-    }
-
-    @Override
-    public List<OrderedMaintenance> sortMaintenancesOfCertainGuestByPrice(EntityManager entityManager, Long guestId) {
-        String SELECT_ALL_MAINTENANCES_OF_CERTAIN_GUEST_SORTED_BY_PRICE = "select ra.maintenances FROM" +
-                " RoomAssignment ra inner join OrderedMaintenance om on om.roomAssignment.id = ra.id where ra.guest.id = :guestId order by om.maintenance.maintenancePrice";
-        return entityManager.createQuery(SELECT_ALL_MAINTENANCES_OF_CERTAIN_GUEST_SORTED_BY_PRICE).setParameter("guestId", guestId).getResultList();
+    public List<OrderedMaintenance> getSortedMaintenancesOfCertainGuest(EntityManager entityManager, Long guestId, String paramToSort) {
+        String SELECT_ALL_MAINTENANCES_OF_CERTAIN_GUEST = "select ra.maintenances FROM" +
+                " RoomAssignment ra inner join OrderedMaintenance om on ra.id = om.roomAssignment.id where ra.guest.id = :guestId order by :paramToSort";
+        return entityManager.createQuery(SELECT_ALL_MAINTENANCES_OF_CERTAIN_GUEST).setParameter("guestId", guestId).setParameter("paramToSort", paramToSort).getResultList();
     }
 }

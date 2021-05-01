@@ -3,6 +3,7 @@ package com.company.api.service;
 import com.company.model.Room;
 import com.company.model.RoomStatus;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,17 +25,7 @@ public interface IRoomService {
 
     List<Room> getFreeRoomsByDate(LocalDateTime requiredDate);
 
-    List<Room> sortRoomsByPrice();
+    List<Room> getSortedRooms(String paramToSort);
 
-    List<Room> sortRoomsByNumberOfBeds();
-
-    List<Room> sortRoomsByNumberOfStars();
-
-    List<Room> sortFreeRoomsByPrice();
-
-    List<Room> sortFreeRoomsByNumberOfBeds();
-
-    List<Room> sortFreeRoomsByNumberOfStars();
-
-    List<Room> sortRoomsByCheckOutDate();
+    List<Room> getFreeSortedRooms(String paramToSort);
 }

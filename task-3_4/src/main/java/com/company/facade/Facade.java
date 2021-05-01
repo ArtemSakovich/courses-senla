@@ -4,22 +4,21 @@ import com.company.api.service.IGuestService;
 import com.company.api.service.IMaintenanceService;
 import com.company.api.service.IRoomAssignmentService;
 import com.company.api.service.IRoomService;
-import com.company.injection.annotation.DependencyClass;
-import com.company.injection.annotation.DependencyComponent;
 import com.company.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-@DependencyClass
+@Component
 public class Facade {
-    @DependencyComponent
+    @Autowired
     private IGuestService guestService;
-    @DependencyComponent
+    @Autowired
     private IRoomService roomService;
-    @DependencyComponent
+    @Autowired
     private IMaintenanceService maintenanceService;
-    @DependencyComponent
+    @Autowired
     private IRoomAssignmentService roomAssignmentService;
 
     private Facade() {
@@ -62,15 +61,13 @@ public class Facade {
     }
 
     public void sortRoomsByPrice() {
-        roomService.sortRoomsByPrice().forEach(System.out::println);
+        roomService.getSortedRooms("roomPrice").forEach(System.out::println);
     }
 
-    public void sortRoomsByCapacity() {
-        roomService.sortRoomsByNumberOfBeds().forEach(System.out::println);
-    }
+    public void sortRoomsByCapacity() { roomService.getSortedRooms("numberOfBeds").forEach(System.out::println);}
 
     public void sortRoomsByNumberOfStars() {
-        roomService.sortRoomsByNumberOfStars().forEach(System.out::println);
+        roomService.getSortedRooms("numberOfStars").forEach(System.out::println);
     }
 
     public void viewListOfFreeRooms() {
@@ -78,15 +75,15 @@ public class Facade {
     }
 
     public void sortFreeRoomsByPrice() {
-        roomService.sortFreeRoomsByPrice().forEach(System.out::println);
+        roomService.getFreeSortedRooms("roomPrice").forEach(System.out::println);
     }
 
     public void sortFreeRoomsByCapacity() {
-        roomService.sortFreeRoomsByNumberOfBeds().forEach(System.out::println);
+        roomService.getFreeSortedRooms("numberOfBeds").forEach(System.out::println);
     }
 
     public void sortFreeRoomsByNumberOfStars() {
-        roomService.sortFreeRoomsByNumberOfStars().forEach(System.out::println);
+        roomService.getFreeSortedRooms("numberOfStars").forEach(System.out::println);
     }
 
     public void viewListOfGuests() {
@@ -94,14 +91,14 @@ public class Facade {
     }
 
     public void sortGuestsABC() {
-        guestService.sortGuestsABC().forEach(System.out::println);
+        guestService.getSortedGuests("name").forEach(System.out::println);
     }
 
     public void sortRoomsByCheckOutDate() {
-        if (roomService.sortRoomsByCheckOutDate().isEmpty()) {
+        if (roomService.getSortedRooms("checkOutDate").isEmpty()) {
             System.out.println("All rooms are free");
         } else {
-            roomService.sortRoomsByCheckOutDate().forEach(System.out::println);
+            roomService.getSortedRooms("checkOutDate").forEach(System.out::println);
         }
     }
 
@@ -131,19 +128,19 @@ public class Facade {
     }
 
     public void sortMaintenancesOfCertainGuestByPrice(Long guestId) {
-        maintenanceService.sortMaintenancesOfCertainGuestByPrice(guestId).forEach(System.out::println);
+        maintenanceService.getSortedMaintenancesOfCertainGuest(guestId, "maintenancePrice").forEach(System.out::println);
     }
 
     public void sortMaintenancesOfCertainGuestByOrderDate(Long guestId) {
-        maintenanceService.sortMaintenancesByOrderDate(guestId).forEach(System.out::println);
+        maintenanceService.getSortedMaintenancesOfCertainGuest(guestId, "orderDate").forEach(System.out::println);
     }
 
     public void sortAllMaintenancesBySectionABC() {
-        maintenanceService.sortAllMaintenancesBySectionABC().forEach(System.out::println);
+        maintenanceService.getSortedMaintenances("maintenanceSection").forEach(System.out::println);
     }
 
     public void sortAllMaintenancesByPrice() {
-        maintenanceService.sortAllMaintenancesByPrice().forEach(System.out::println);
+        maintenanceService.getSortedMaintenances("maintenancePrice").forEach(System.out::println);
     }
 
     public Room viewRoomDetails(Long roomId) {
@@ -152,5 +149,9 @@ public class Facade {
 
     public void orderMaintenance(Long guestId, Long maintenanceIdId) {
         guestService.orderMaintenance(guestId, maintenanceIdId);
+    }
+
+    public void getAllOrderedMaintenances() {
+        maintenanceService.getAllOrderedMaintenances().forEach(System.out::println);
     }
 }

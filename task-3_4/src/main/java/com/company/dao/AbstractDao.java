@@ -2,7 +2,6 @@ package com.company.dao;
 
 import com.company.api.dao.IGenericDao;
 import com.company.model.AEntity;
-
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -19,12 +18,12 @@ public abstract class AbstractDao<T extends AEntity> implements IGenericDao<T> {
 
     @Override
     public List<T> getAll(EntityManager entityManager) {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-            CriteriaQuery<T> cq = cb.createQuery(getEntityClass());
-            Root<T> rootEntry = cq.from(getEntityClass());
-            CriteriaQuery<T> all = cq.select(rootEntry);
-            TypedQuery<T> allQuery = entityManager.createQuery(all);
-            return allQuery.getResultList();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> cq = cb.createQuery(getEntityClass());
+        Root<T> rootEntry = cq.from(getEntityClass());
+        CriteriaQuery<T> all = cq.select(rootEntry);
+        TypedQuery<T> allQuery = entityManager.createQuery(all);
+        return allQuery.getResultList();
     }
 
     @Override
@@ -43,26 +42,14 @@ public abstract class AbstractDao<T extends AEntity> implements IGenericDao<T> {
     }
 
     @Override
-    public List<T> getSortedABCEntities(EntityManager entityManager) {
+    public List<T> getSortedEntities(EntityManager entityManager, String paramToSort) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> cq = cb.createQuery(getEntityClass());
         Root<T> rootEntry = cq.from(getEntityClass());
-        CriteriaQuery<T> all = cq.select(rootEntry).orderBy(cb.asc(rootEntry.get(getColumnNameForABCSort())));
-        TypedQuery<T> allQuery = entityManager.createQuery(all);
-        return allQuery.getResultList();
-    }
-
-    @Override
-    public List<T> getSortedEntities(EntityManager entityManager, String sortParam) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(getEntityClass());
-        Root<T> rootEntry = cq.from(getEntityClass());
-        CriteriaQuery<T> all = cq.select(rootEntry).orderBy(cb.asc(rootEntry.get(sortParam)));
+        CriteriaQuery<T> all = cq.select(rootEntry).orderBy(cb.asc(rootEntry.get(paramToSort)));
         TypedQuery<T> allQuery = entityManager.createQuery(all);
         return allQuery.getResultList();
     }
 
     protected abstract Class<T> getEntityClass();
-
-    protected abstract String getColumnNameForABCSort();
 }

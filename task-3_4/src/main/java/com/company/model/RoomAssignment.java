@@ -5,18 +5,22 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 @Entity
-@Table(name = "roomassignment")
+@Table(name = "room_assignments")
 public class RoomAssignment extends AEntity {
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "roomId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
     private Room room;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "guestId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "guest_id")
     private Guest guest;
+    @Column(name = "check_in_date")
     private Timestamp checkInDate;
+    @Column(name = "check_out_date")
     private Timestamp checkOutDate;
     @Enumerated(EnumType.STRING)
+    @Column(name = "room_assignment_status")
     private RoomAssignmentStatus roomAssignmentStatus;
+    @Column(name = "created_on")
     private Timestamp createdOn;
     @OneToMany(mappedBy = "roomAssignment")
     private List<OrderedMaintenance> maintenances = new ArrayList<>();

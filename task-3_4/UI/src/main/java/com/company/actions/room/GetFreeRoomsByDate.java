@@ -2,15 +2,15 @@ package com.company.actions.room;
 
 import com.company.facade.Facade;
 import com.company.api.IAction;
-import com.company.injection.annotation.DependencyClass;
-import com.company.injection.annotation.DependencyComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
-@DependencyClass
+@Component
 public class GetFreeRoomsByDate implements IAction {
-    @DependencyComponent
+    @Autowired
     private Facade facade;
 
     @Override

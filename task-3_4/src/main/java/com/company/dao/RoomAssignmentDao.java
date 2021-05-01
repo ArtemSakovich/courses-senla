@@ -1,20 +1,14 @@
 package com.company.dao;
 
 import com.company.api.dao.IRoomAssignmentDao;
-import com.company.injection.annotation.DependencyClass;
 import com.company.model.RoomAssignment;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
-@DependencyClass
+@Repository
 public class RoomAssignmentDao extends AbstractDao<RoomAssignment> implements IRoomAssignmentDao {
-
-    @Override
-    protected String getColumnNameForABCSort() {
-        final String ROOM_ASSIGNMENT_COLUMN_NAME_FOR_ABC_SORT = "roomAssignmentStatus";
-        return ROOM_ASSIGNMENT_COLUMN_NAME_FOR_ABC_SORT;
-    }
 
     @Override
     protected Class getEntityClass() {

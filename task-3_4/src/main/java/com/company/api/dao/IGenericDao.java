@@ -17,7 +17,5 @@ public interface IGenericDao<T extends AEntity> {
 
     void delete(EntityManager entityManager, T entity);
 
-    List<T> getSortedABCEntities(EntityManager entityManager);
-
     List<T> getSortedEntities(EntityManager entityManager, String sortParam);
 }

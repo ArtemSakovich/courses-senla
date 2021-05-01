@@ -4,32 +4,30 @@ import com.company.api.dao.IGuestDao;
 import com.company.api.dao.IRoomAssignmentDao;
 import com.company.api.dao.IRoomDao;
 import com.company.api.service.IRoomAssignmentService;
-import com.company.injection.annotation.DependencyClass;
-import com.company.injection.annotation.DependencyComponent;
-import com.company.model.Maintenance;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.company.model.OrderedMaintenance;
 import com.company.model.RoomAssignment;
-import com.company.util.DatabaseConnector;
-import com.company.util.HibernateSessionFactory;
 import org.hibernate.Session;
+import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 import java.util.List;
-import java.util.logging.Logger;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
-@DependencyClass
+@Service
 public class RoomAssignmentService implements IRoomAssignmentService {
-    @DependencyComponent
+    @Autowired
     private IRoomAssignmentDao roomAssignmentDao;
-    @DependencyComponent
+    @Autowired
     private IGuestDao guestDao;
-    @DependencyComponent
+    @Autowired
     private IRoomDao roomDao;
-    @DependencyComponent
-    private DatabaseConnector databaseConnector;
-    @DependencyComponent
-    private HibernateSessionFactory hibernateSessionFactory;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     private static final Logger log = Logger.getLogger(RoomAssignmentService.class.getName());
 
@@ -38,7 +36,7 @@ public class RoomAssignmentService implements IRoomAssignmentService {
 
     @Override
     public Double getPricePerStay(RoomAssignment roomAssignment) {
-        Session session = hibernateSessionFactory.openSession();
+        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
         Double totalMaintenancePrice = 0.0;
         for (OrderedMaintenance maintenance : roomAssignment.getMaintenances()) {
             totalMaintenancePrice += maintenance.getMaintenance().getMaintenancePrice();
@@ -49,7 +47,7 @@ public class RoomAssignmentService implements IRoomAssignmentService {
 
     @Override
     public List<String> getThreeLastRoomAssigmentDates(Long roomId) {
-        Session session = hibernateSessionFactory.openSession();
+        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
         return roomAssignmentDao.getThreeLastRoomAssigmentDates(session, roomId);
     }
 

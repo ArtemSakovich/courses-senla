@@ -1,23 +1,17 @@
 package com.company.dao;
 
 import com.company.api.dao.IGuestDao;
-import com.company.injection.annotation.DependencyClass;
 import com.company.model.Guest;
+import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-@DependencyClass
+@Repository
 public class GuestDao extends AbstractDao<Guest> implements IGuestDao {
 
     @Override
     protected Class getEntityClass() {
         return Guest.class;
-    }
-
-    @Override
-    protected String getColumnNameForABCSort() {
-        final String GUEST_COLUMN_NAME_FOR_ABC_SORT = "name";
-        return GUEST_COLUMN_NAME_FOR_ABC_SORT;
     }
 
     @Override

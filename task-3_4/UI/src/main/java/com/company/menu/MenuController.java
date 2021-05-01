@@ -1,14 +1,14 @@
 package com.company.menu;
 
-import com.company.injection.annotation.DependencyClass;
-import com.company.injection.annotation.DependencyComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
-@DependencyClass
+@Component
 public class MenuController {
-    @DependencyComponent
+    @Autowired
     private Builder builder;
-    @DependencyComponent
+    @Autowired
     private Navigator navigator;
 
     private MenuController() {
