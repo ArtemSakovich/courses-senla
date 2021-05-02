@@ -9,6 +9,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.support.SharedEntityManagerBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -21,13 +22,16 @@ import java.util.Properties;
 @ComponentScan(basePackages = "com.company")
 @EnableTransactionManagement
 public class AnnotationAppConfig {
+
     @Value("${connectionUrl}")
     private String CONNECTION_URL;
     @Value("${modelPackageToScan}")
     private String modelPackageToScan;
     private LocalContainerEntityManagerFactoryBean emf;
+    private SharedEntityManagerBean entityManagerBean;
     private DriverManagerDataSource dataSource;
     private JpaTransactionManager tm;
+
     @Bean
     public DataSource dataSource() {
         if (dataSource == null) {
@@ -54,17 +58,25 @@ public class AnnotationAppConfig {
     public PlatformTransactionManager transactionManager() {
         if (tm == null) {
             tm = new JpaTransactionManager();
-            tm.setEntityManagerFactory(entityManagerFactory().getNativeEntityManagerFactory());
+            tm.setEntityManagerFactory(entityManagerFactory().getObject());
             tm.setDataSource(dataSource());
         }
         return tm;
+    }
+
+    @Bean
+    public SharedEntityManagerBean entityManager() {
+        if (entityManagerBean == null) {
+            entityManagerBean = new SharedEntityManagerBean();
+            entityManagerBean.setEntityManagerFactory(entityManagerFactory().getObject());
+        }
+        return entityManagerBean;
     }
 
     Properties additionalProperties() {
         Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", "validate");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL9Dialect");
-
         return properties;
     }
 }

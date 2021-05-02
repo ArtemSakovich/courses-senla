@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface IRoomAssignmentDao extends IGenericDao<RoomAssignment> {
 
-    List<String> getThreeLastRoomAssigmentDates(EntityManager entityManager, Long roomId);
+    List<String> getThreeLastRoomAssigmentDates(Long roomId);
 
-    List<RoomAssignment> getActiveRoomAssignmentsByGuestId(EntityManager entityManager, Long guestId);
+    List<RoomAssignment> getActiveRoomAssignmentsByGuestId(Long guestId);
 
-    List<RoomAssignment> getActiveRoomAssignmentsByRoomId(EntityManager entityManager, Long roomId);
+    List<RoomAssignment> getActiveRoomAssignmentsByRoomId(Long roomId);
 }

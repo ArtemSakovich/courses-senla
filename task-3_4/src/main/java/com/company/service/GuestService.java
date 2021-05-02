@@ -7,13 +7,12 @@ import com.company.api.service.IRoomAssignmentService;
 
 import com.company.model.*;
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManagerFactory;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,8 +32,6 @@ public class GuestService implements IGuestService {
     private IOrderedMaintenanceDao orderedMaintenanceDao;
     @Autowired
     private IRoomAssignmentService roomAssignmentService;
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
 
     private static final Logger log = Logger.getLogger(GuestService.class.getName());
 
@@ -56,18 +53,16 @@ public class GuestService implements IGuestService {
     @Override
     @Transactional
     public Guest addGuest(String name, String surname, Integer age) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
         Guest guest = new Guest(name, surname, age);
-        guestDao.save(session, guest);
+        guestDao.save(guest);
         return guest;
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.NESTED, isolation = Isolation.READ_UNCOMMITTED)
     public void accommodateToRoom(Long guestId, Long roomId, LocalDateTime checkOutDate) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        Guest guestToFlip = guestDao.getById(session, guestId);
-        Room roomToFlip = roomDao.getById(session, roomId);
+        Guest guestToFlip = guestDao.getById(guestId);
+        Room roomToFlip = roomDao.getById(roomId);
         if (guestToFlip == null || roomToFlip == null) {
             log.warn("Incorrect input when trying to accommodate a guest");
             throw new IllegalArgumentException("Guest or room not found");
@@ -77,14 +72,13 @@ public class GuestService implements IGuestService {
                     Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(checkOutDate), RoomAssignmentStatus.ACTIVE, Timestamp.valueOf(LocalDateTime.now()));
             roomToFlip.addRoomAssignment(roomAssignment);
             guestToFlip.addRoomAssignment(roomAssignment);
-            roomAssignmentDao.save(session, roomAssignment);
+            roomAssignmentDao.save(roomAssignment);
             if (roomToFlip.getNumberOfBeds().equals(
-                    roomAssignmentDao.getActiveRoomAssignmentsByRoomId(session,
-                            roomToFlip.getId()).size())) {
+                    roomAssignmentDao.getActiveRoomAssignmentsByRoomId(roomToFlip.getId()).size())) {
                 roomToFlip.setRoomStatus(RoomStatus.OCCUPIED);
             }
-            guestDao.update(session, guestToFlip);
-            roomDao.update(session, roomToFlip);
+            guestDao.update(guestToFlip);
+            roomDao.update(roomToFlip);
         } else {
             log.warn("Failed to accommodate guest to room");
             throw new OperationCancelledException("Unfortunately, this room is " +
@@ -95,8 +89,7 @@ public class GuestService implements IGuestService {
     @Override
     @Transactional
     public void evictFromRoom(Long guestId) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        Guest guestToEvict = guestDao.getById(session, guestId);
+        Guest guestToEvict = guestDao.getById(guestId);
         if (guestToEvict == null) {
             log.warn("Incorrect input when trying to evict guest from room");
             throw new IllegalArgumentException("Guest not found");
@@ -104,11 +97,11 @@ public class GuestService implements IGuestService {
             guestToEvict.getRoomAssignments().stream()
                     .filter(a -> RoomAssignmentStatus.ACTIVE.equals(a.getRoomAssignmentStatus()))
                     .findAny().ifPresentOrElse(roomAssignment -> {
-                        Room roomToEvictFrom = roomDao.getById(session, roomAssignment.getRoom().getId());
+                        Room roomToEvictFrom = roomDao.getById(roomAssignment.getRoom().getId());
                         roomToEvictFrom.setRoomStatus(RoomStatus.FREE);
                         roomAssignment.setRoomAssignmentStatus(RoomAssignmentStatus.CLOSED);
                         roomAssignment.setCheckOutDate(Timestamp.valueOf(LocalDateTime.now()));
-                        roomAssignmentDao.update(session, roomAssignment);
+                        roomAssignmentDao.update(roomAssignment);
                     },
                     () -> {
                         log.warn("Failed to evict guest from room");
@@ -120,20 +113,19 @@ public class GuestService implements IGuestService {
     @Override
     @Transactional
     public void orderMaintenance(Long guestId, Long maintenanceId) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        Guest guestToOrderMaintenance = guestDao.getById(session, guestId);
-        Maintenance maintenanceToOrder = maintenanceDao.getById(session, maintenanceId);
+        Guest guestToOrderMaintenance = guestDao.getById(guestId);
+        Maintenance maintenanceToOrder = maintenanceDao.getById(maintenanceId);
         if (guestToOrderMaintenance == null || maintenanceToOrder == null) {
             log.warn("Incorrect input when trying to order maintenance");
             throw new IllegalArgumentException("Guest or maintenance not found");
         } else {
-            roomAssignmentDao.getActiveRoomAssignmentsByGuestId(session,
+            roomAssignmentDao.getActiveRoomAssignmentsByGuestId(
                     guestToOrderMaintenance.getId()).stream()
                     .findAny().ifPresentOrElse(roomAssignment -> {
                         OrderedMaintenance orderedMaintenance = new OrderedMaintenance(roomAssignment, maintenanceToOrder, Timestamp.valueOf(LocalDateTime.now()));
                         roomAssignment.addMaintenance(orderedMaintenance);
-                        orderedMaintenanceDao.save(session, orderedMaintenance);
-                        roomAssignmentDao.update(session, roomAssignment);
+                        orderedMaintenanceDao.save(orderedMaintenance);
+                        roomAssignmentDao.update(roomAssignment);
                     },
                     () -> {
                         log.warn("Failed to order maintenance");
@@ -144,16 +136,15 @@ public class GuestService implements IGuestService {
 
     @Override
     public Double getAmountOfPaymentForTheRoom(Long guestId) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        Guest guestToGetAmount = guestDao.getById(session, guestId);
+        Guest guestToGetAmount = guestDao.getById(guestId);
         if (guestToGetAmount == null) {
             log.warn("Incorrect input when trying to get amount of payment for room");
             throw new IllegalArgumentException("Guest not found");
         } else {
             Double amountOfPaymentForTheRoom = 0.0;
-            if (!roomAssignmentDao.getActiveRoomAssignmentsByGuestId(session,
+            if (!roomAssignmentDao.getActiveRoomAssignmentsByGuestId(
                     guestToGetAmount.getId()).isEmpty()) {
-                for (RoomAssignment roomAssignment : roomAssignmentDao.getActiveRoomAssignmentsByGuestId(session,
+                for (RoomAssignment roomAssignment : roomAssignmentDao.getActiveRoomAssignmentsByGuestId(
                         guestToGetAmount.getId())) {
                     amountOfPaymentForTheRoom = roomAssignmentService.getPricePerStay(roomAssignment);
                 }
@@ -164,23 +155,19 @@ public class GuestService implements IGuestService {
 
     @Override
     public List<Guest> getSortedGuests(String paramToSort) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        return guestDao.getSortedEntities(session, paramToSort);
+        return guestDao.getSortedEntities(paramToSort);
     }
 
     @Override
     public List<Guest> getAllGuests() {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        return guestDao.getAll(session);
+        return guestDao.getAll();
     }
 
     @Override
     public Integer getNumberOfGuests() {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
         int totalNumberOfGuest = 0;
         for (Guest guest : getAllGuests()) {
-            if (!roomAssignmentDao.getActiveRoomAssignmentsByGuestId(session,
-                    guest.getId()).isEmpty()) {
+            if (!roomAssignmentDao.getActiveRoomAssignmentsByGuestId(guest.getId()).isEmpty()) {
                 totalNumberOfGuest++;
             }
         }
@@ -189,7 +176,6 @@ public class GuestService implements IGuestService {
 
     @Override
     public List<Guest> getThreeLastGuests(Long roomId) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        return guestDao.getThreeLastGuests(session, roomId);
+        return guestDao.getThreeLastGuests(roomId);
     }
 }

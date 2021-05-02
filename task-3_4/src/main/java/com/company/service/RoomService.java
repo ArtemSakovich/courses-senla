@@ -6,14 +6,11 @@ import com.company.api.service.IRoomService;
 import com.company.model.Room;
 import com.company.model.RoomStatus;
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,8 +23,6 @@ public class RoomService implements IRoomService {
     private boolean isRoomStatusChangeable;
     @Value("${allowedNumberOfNotes:10}")
     private int allowedNumberOfNotes;
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
 
     private static final Logger log = Logger.getLogger(RoomService.class.getName());
 
@@ -38,37 +33,33 @@ public class RoomService implements IRoomService {
     @Override
     @Transactional
     public Room addRoom(Integer numberOfBeds, Integer numberOfStars, Integer roomNumber, Double roomPrice) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
         Room room = new Room(numberOfBeds, numberOfStars, roomNumber, roomPrice);
         room.setRoomStatus(RoomStatus.FREE);
-        roomDao.save(session, room);
+        roomDao.save(room);
         return room;
     }
 
     @Override
     public List<Room> getAllRooms() {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        return roomDao.getAll(session);
+        return roomDao.getAll();
     }
 
     @Override
     public Room getById(Long roomId) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        return roomDao.getById(session, roomId);
+        return roomDao.getById(roomId);
     }
 
     @Override
     @Transactional
     public void changeRoomStatus(Long id, RoomStatus newRoomStatus) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
         if (isRoomStatusChangeable) {
-            Room roomToChangeStatus = roomDao.getById(session, id);
+            Room roomToChangeStatus = roomDao.getById(id);
             if (roomToChangeStatus == null) {
                 log.warn("Incorrect input when trying to change room status");
                 throw new IllegalArgumentException("Room not found!");
             } else {
                 roomToChangeStatus.setRoomStatus(newRoomStatus);
-                roomDao.update(session, roomToChangeStatus);
+                roomDao.update(roomToChangeStatus);
             }
         } else {
             log.warn("Error when trying to change room status");
@@ -79,21 +70,19 @@ public class RoomService implements IRoomService {
     @Override
     @Transactional
     public void changeRoomPrice(Long id, Double newRoomPrice) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        Room roomToChangePrice = roomDao.getById(session, id);
+        Room roomToChangePrice = roomDao.getById(id);
         if (roomToChangePrice == null) {
             log.warn("Incorrect input when trying to change room price");
             throw new IllegalArgumentException("Room not found!");
         } else {
             roomToChangePrice.setRoomPrice(newRoomPrice);
-            roomDao.update(session, roomToChangePrice);
+            roomDao.update(roomToChangePrice);
         }
     }
 
     @Override
     public List<Room> getAllFreeRooms() {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        return roomDao.getFreeRooms(session);
+        return roomDao.getFreeRooms();
     }
 
     @Override
@@ -103,19 +92,16 @@ public class RoomService implements IRoomService {
 
     @Override
     public List<Room> getFreeRoomsByDate(LocalDateTime requiredDate) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        return roomDao.getFreeRoomsByDate(session, requiredDate);
+        return roomDao.getFreeRoomsByDate(requiredDate);
     }
 
     @Override
     public List<Room> getSortedRooms(String paramToSort) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        return roomDao.getSortedRooms(session, paramToSort);
+        return roomDao.getSortedRooms(paramToSort);
     }
 
     @Override
     public List<Room> getFreeSortedRooms(String paramToSort) {
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        return roomDao.getFreeSortedRooms(session, paramToSort);
+        return roomDao.getFreeSortedRooms(paramToSort);
     }
 }

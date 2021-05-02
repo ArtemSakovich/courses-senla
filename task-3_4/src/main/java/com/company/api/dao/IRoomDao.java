@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface IRoomDao extends IGenericDao<Room>{
 
-    List<Room> getFreeRooms(EntityManager entityManager);
+    List<Room> getFreeRooms();
 
-    List<Room> getFreeRoomsByDate(EntityManager entityManager, LocalDateTime requiredDate);
+    List<Room> getFreeRoomsByDate(LocalDateTime requiredDate);
 
-    List<Room> getSortedRooms(EntityManager entityManager, String paramToSort);
+    List<Room> getSortedRooms(String paramToSort);
 
-    List<Room> getFreeSortedRooms(EntityManager entityManager, String paramToSort);
+    List<Room> getFreeSortedRooms(String paramToSort);
 }

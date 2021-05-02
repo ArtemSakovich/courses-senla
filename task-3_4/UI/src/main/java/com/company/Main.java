@@ -12,6 +12,5 @@ public class Main {
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AnnotationAppConfig.class);
         MenuController menuController = applicationContext.getBean(MenuController.class);
         menuController.run();
-
     }
 }
