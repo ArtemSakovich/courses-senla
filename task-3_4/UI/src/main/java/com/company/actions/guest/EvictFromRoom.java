@@ -2,13 +2,13 @@ package com.company.actions.guest;
 
 import com.company.facade.Facade;
 import com.company.api.IAction;
-import com.company.injection.annotation.DependencyClass;
-import com.company.injection.annotation.DependencyComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
-@DependencyClass
+@Component
 public class EvictFromRoom implements IAction {
-    @DependencyComponent
+    @Autowired
     private Facade facade;
     /**
      * Method calls when the user wants to evict a guest from a room. Method ask the user to enter a guest id through

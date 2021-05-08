@@ -1,13 +1,17 @@
 package com.company.dao;
 
 import com.company.api.dao.IGuestDao;
-import com.company.injection.annotation.DependencyClass;
 import com.company.model.Guest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-@DependencyClass
+@Repository
 public class GuestDao extends AbstractDao<Guest> implements IGuestDao {
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Override
     protected Class getEntityClass() {
@@ -15,13 +19,7 @@ public class GuestDao extends AbstractDao<Guest> implements IGuestDao {
     }
 
     @Override
-    protected String getColumnNameForABCSort() {
-        final String GUEST_COLUMN_NAME_FOR_ABC_SORT = "name";
-        return GUEST_COLUMN_NAME_FOR_ABC_SORT;
-    }
-
-    @Override
-    public List<Guest> getThreeLastGuests(EntityManager entityManager, Long roomId) {
+    public List<Guest> getThreeLastGuests(Long roomId) {
         String SELECT_THREE_LAST_GUESTS_HQL_QUERY = "FROM Guest g INNER JOIN RoomAssignment ra ON g.id=ra.guest.id " +
                 "WHERE ra.room.id =:roomId order by ra.createdOn desc";
         return entityManager.createQuery(SELECT_THREE_LAST_GUESTS_HQL_QUERY).setParameter("roomId", roomId).setMaxResults(3).getResultList();

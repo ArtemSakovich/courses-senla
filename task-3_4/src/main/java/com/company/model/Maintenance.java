@@ -3,12 +3,14 @@ package com.company.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "maintenance")
+@Table(name = "maintenances")
 public class Maintenance extends AEntity {
-
+    @Column(name = "maintenance_name")
     private String maintenanceName;
+    @Column(name = "maintenance_price")
     private Double maintenancePrice;
     @Enumerated(EnumType.STRING)
+    @Column(name = "maintenance_section")
     private MaintenanceSection maintenanceSection;
 
     public Maintenance(String maintenanceName, Double maintenancePrice, MaintenanceSection maintenanceSection) {

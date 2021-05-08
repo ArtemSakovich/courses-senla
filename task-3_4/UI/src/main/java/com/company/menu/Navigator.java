@@ -1,16 +1,16 @@
 package com.company.menu;
 
-import com.company.injection.annotation.DependencyClass;
-import com.company.injection.annotation.DependencyComponent;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-@DependencyClass
+@Component
 public class Navigator {
-    @DependencyComponent
+    @Autowired
     private Menu currentMenu;
-    @DependencyComponent
+    @Autowired
     private Builder builder;
+
     private static final Logger log = Logger.getLogger(Navigator.class.getName());
 
     private Navigator() {
@@ -39,7 +39,7 @@ public class Navigator {
                     currentMenu = builder.createRetryMenu(menuItem);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
-                    log.log(Level.SEVERE, e.getMessage(), e);
+                    log.warn(e.getMessage(), e);
                     currentMenu = builder.createRetryMenu(menuItem);
 
                 }

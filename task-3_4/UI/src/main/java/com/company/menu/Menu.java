@@ -1,8 +1,10 @@
 package com.company.menu;
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
-
+@Component
 public class Menu {
     private String name;
     private List<MenuItem> menuItems = new ArrayList<>();

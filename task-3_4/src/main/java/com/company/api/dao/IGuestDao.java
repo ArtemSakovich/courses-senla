@@ -6,5 +6,5 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 public interface IGuestDao extends IGenericDao<Guest> {
-    List<Guest> getThreeLastGuests(EntityManager entityManager, Long roomId);
+    List<Guest> getThreeLastGuests(Long roomId);
 }

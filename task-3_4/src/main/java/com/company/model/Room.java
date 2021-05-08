@@ -4,13 +4,18 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 @Entity
-@Table(name = "room")
+@Table(name = "rooms")
 public class Room extends AEntity {
+    @Column(name = "room_number")
     private Integer roomNumber;
     @Enumerated(EnumType.STRING)
+    @Column(name = "room_status")
     private RoomStatus roomStatus;
+    @Column(name = "room_price")
     private Double roomPrice;
+    @Column(name = "number_of_beds")
     private Integer numberOfBeds;
+    @Column(name = "number_of_stars")
     private Integer numberOfStars;
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoomAssignment> roomAssignments;

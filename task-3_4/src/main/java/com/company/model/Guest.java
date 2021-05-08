@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 @Entity
-@Table(name = "guest")
+@Table(name = "guests")
 public class Guest extends AEntity {
     private String name;
     private String surname;

@@ -10,15 +10,11 @@ public interface IMaintenanceService {
 
     void changeMaintenancePrice(Long id, Double newPrice);
 
-    List<Maintenance> sortMaintenancesOfCertainGuestByPrice(Long guestId);
-
-    List<Maintenance> sortAllMaintenancesByPrice();
-
-    List<Maintenance> sortAllMaintenancesBySectionABC();
+    List<Maintenance> getSortedMaintenances(String paramToSort);
 
     List<Maintenance> getAllMaintenancesOfCertainGuest(Long guestId);
 
-    List<Maintenance> sortMaintenancesByOrderDate(Long guestId);
+    List<Maintenance> getSortedMaintenancesOfCertainGuest(Long guestId, String paramToSort);
 
     List<Maintenance> getAllOrderedMaintenances();
 }

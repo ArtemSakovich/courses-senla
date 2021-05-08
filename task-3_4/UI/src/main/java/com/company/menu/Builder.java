@@ -7,48 +7,46 @@ import com.company.actions.guest.GetAmountPerStay;
 import com.company.actions.maintenance.*;
 import com.company.actions.room.*;
 import com.company.facade.Facade;
-import com.company.injection.annotation.DependencyClass;
-import com.company.injection.annotation.DependencyComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.sql.SQLException;
-
-@DependencyClass
+@Component
 public class Builder {
-    @DependencyComponent
+    @Autowired
     private Menu rootMenu;
-    @DependencyComponent
+    @Autowired
     private Facade facade;
-    @DependencyComponent
+    @Autowired
     private AddRoom addRoomAction;
-    @DependencyComponent
+    @Autowired
     private ChangeRoomStatus changeRoomStatusAction;
-    @DependencyComponent
+    @Autowired
     private ChangeRoomPrice changeRoomPrice;
-    @DependencyComponent
+    @Autowired
     private ViewThreeLastGuestsOfRoom viewThreeLastGuestsOfRoom;
-    @DependencyComponent
+    @Autowired
     private GetFreeRoomsByDate getFreeRoomsByDate;
-    @DependencyComponent
+    @Autowired
     private GetRoomDetails getRoomDetails;
-    @DependencyComponent
+    @Autowired
     private AddGuest addGuest;
-    @DependencyComponent
+    @Autowired
     private FlipToRoom flipToRoom;
-    @DependencyComponent
+    @Autowired
     private EvictFromRoom evictFromRoom;
-    @DependencyComponent
+    @Autowired
     private GetAmountPerStay getAmountPerStay;
-    @DependencyComponent
+    @Autowired
     private AddMaintenance addMaintenance;
-    @DependencyComponent
+    @Autowired
     private ChangeMaintenancePrice changeMaintenancePrice;
-    @DependencyComponent
+    @Autowired
     private ViewListOfMaintenancesOfCerainGuest viewListOfMaintenancesOfCerainGuest;
-    @DependencyComponent
+    @Autowired
     private OrderMaintenance orderMaintenance;
-    @DependencyComponent
+    @Autowired
     private SortMaintenancesOfCertainGuestByPrice sortMaintenancesOfCertainGuestByPrice;
-    @DependencyComponent
+    @Autowired
     private SortMaintenancesOfCertainGuestByOrderDate sortMaintenancesOfCertainGuestByOrderDate;
 
     private Builder() {
@@ -56,7 +54,6 @@ public class Builder {
     }
 
     public void buildMenu() {
-        rootMenu = new Menu();
         rootMenu.addMenuItem(new MenuItem("Guest Menu", () -> { }, createGuestMenu()));
         rootMenu.addMenuItem(new MenuItem("Room Menu", () -> { }, createRoomMenu()));
         rootMenu.addMenuItem(new MenuItem("Maintenance Menu", () -> { }, createMaintenanceMenu()));
@@ -66,9 +63,7 @@ public class Builder {
     }
 
     public Menu getRootMenu() {
-        if (rootMenu == null) {
             buildMenu();
-        }
         return rootMenu;
     }
 
@@ -109,6 +104,8 @@ public class Builder {
         maintenanceMenu.addMenuItem(new MenuItem("Change maintenance price", changeMaintenancePrice, maintenanceMenu));
         maintenanceMenu.addMenuItem(new MenuItem("View list of maintenances of certain guest",
                 viewListOfMaintenancesOfCerainGuest, maintenanceMenu));
+        maintenanceMenu.addMenuItem(new MenuItem("View list of all ordered maintenances",
+                () -> { facade.getAllOrderedMaintenances(); }, maintenanceMenu));
         maintenanceMenu.addMenuItem(new MenuItem("Order maintenance", orderMaintenance, maintenanceMenu));
         maintenanceMenu.addMenuItem(new MenuItem("Sort maintenances by", () -> { }, createSortMaintenanceMenu()));
         maintenanceMenu.addMenuItem(new MenuItem(("Back to main menu"), () -> { }, rootMenu));
@@ -123,7 +120,7 @@ public class Builder {
         sortRoomMenu.addMenuItem(new MenuItem("Sort free rooms by price", () -> facade.sortFreeRoomsByPrice(), sortRoomMenu));
         sortRoomMenu.addMenuItem(new MenuItem("Sort free rooms by capacity", () -> facade.sortFreeRoomsByCapacity(), sortRoomMenu));
         sortRoomMenu.addMenuItem(new MenuItem("Sort free rooms by rating", () -> facade.sortFreeRoomsByNumberOfStars(), sortRoomMenu));
-        sortRoomMenu.addMenuItem(new MenuItem("Sort rooms by release date", () -> facade.sortRoomsByCheckOutDate(), sortRoomMenu));
+        sortRoomMenu.addMenuItem(new MenuItem("Sort rooms by check out date", () -> facade.sortRoomsByCheckOutDate(), sortRoomMenu));
         sortRoomMenu.addMenuItem(new MenuItem(("Back to main menu"), () -> { }, rootMenu));
         return sortRoomMenu;
     }

@@ -1,23 +1,20 @@
 package com.company.model;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "orderedmaintenances")
+@Table(name = "ordered_maintenances")
 public class OrderedMaintenance extends AEntity{
-    @ManyToOne
-    @JoinColumn(name = "roomAssignmentId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_assignment_id")
     RoomAssignment roomAssignment;
 
-    @ManyToOne
-    @JoinColumn(name = "maintenanceId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "maintenance_id")
     Maintenance maintenance;
-
+    @Column(name = "order_date")
     Timestamp orderDate;
 
     public OrderedMaintenance() {

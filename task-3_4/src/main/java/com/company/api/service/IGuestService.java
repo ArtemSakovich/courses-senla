@@ -18,9 +18,9 @@ public interface IGuestService {
 
     List<Guest> getThreeLastGuests(Long roomId);
 
-    List<Guest> sortGuestsABC();
-
     void orderMaintenance(Long guestId, Long maintenanceId);
 
     Double getAmountOfPaymentForTheRoom(Long guestId);
+
+    List<Guest> getSortedGuests(String paramToSort);
 }

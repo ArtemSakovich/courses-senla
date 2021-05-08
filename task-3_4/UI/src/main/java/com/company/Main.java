@@ -1,20 +1,16 @@
 package com.company;
 
+import com.company.config.AnnotationAppConfig;
 import com.company.menu.MenuController;
-import com.company.model.Guest;
-import com.company.service.GuestService;
-import com.company.util.ApplicationContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.logging.LogManager;
-
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        LogManager.getLogManager().readConfiguration(Main.class.getClassLoader().getResourceAsStream("logging.properties"));
-        HashMap<String, Object> applicationContext = (HashMap<String, Object>) ApplicationContext.getApplicationContext(MenuController.class);
-        MenuController menuController = (MenuController) applicationContext.get(MenuController.class.getName());
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AnnotationAppConfig.class);
+        MenuController menuController = applicationContext.getBean(MenuController.class);
         menuController.run();
     }
 }

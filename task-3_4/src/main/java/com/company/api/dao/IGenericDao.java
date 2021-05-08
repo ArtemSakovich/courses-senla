@@ -7,17 +7,15 @@ import java.util.List;
 
 public interface IGenericDao<T extends AEntity> {
 
-    T getById(EntityManager entityManager, Long id);
+    T getById(Long id);
 
-    List<T> getAll(EntityManager entityManager);
+    List<T> getAll();
 
-    void save(EntityManager entityManager, T entity);
+    void save(T entity);
 
-    void update(EntityManager entityManager, T updatedEntity);
+    void update(T updatedEntity);
 
-    void delete(EntityManager entityManager, T entity);
+    void delete(T entity);
 
-    List<T> getSortedABCEntities(EntityManager entityManager);
-
-    List<T> getSortedEntities(EntityManager entityManager, String sortParam);
+    List<T> getSortedEntities(String sortParam);
 }
