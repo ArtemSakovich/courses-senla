@@ -1,5 +1,7 @@
 package com.company.config;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,20 +15,27 @@ import org.springframework.orm.jpa.support.SharedEntityManagerBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
+import static org.modelmapper.config.Configuration.AccessLevel.PRIVATE;
+
 @Configuration
-@PropertySource("classpath:application.properties")
+@PropertySource({"classpath:application.properties"})
 @ComponentScan(basePackages = "com.company")
 @EnableTransactionManagement
+@EnableWebMvc
 public class AnnotationAppConfig {
-
     @Value("${connectionUrl}")
     private String CONNECTION_URL;
     @Value("${modelPackageToScan}")
     private String modelPackageToScan;
+    @Value("${hibernateHbm2ddlAutoProperty:validate}")
+    private String hibernateHbm2ddlAutoProperty;
+    @Value("${hibernateDialectProperty:org.hibernate.dialect.PostgreSQL9Dialect}")
+    private String hibernateDialectProperty;
     private LocalContainerEntityManagerFactoryBean emf;
     private SharedEntityManagerBean entityManagerBean;
     private DriverManagerDataSource dataSource;
@@ -37,6 +46,7 @@ public class AnnotationAppConfig {
         if (dataSource == null) {
             dataSource = new DriverManagerDataSource();
             dataSource.setUrl(CONNECTION_URL);
+            dataSource.setDriverClassName("org.postgresql.Driver");
         }
         return dataSource;
     }
@@ -73,10 +83,22 @@ public class AnnotationAppConfig {
         return entityManagerBean;
     }
 
-    Properties additionalProperties() {
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setFieldMatchingEnabled(true)
+                .setSkipNullEnabled(true)
+                .setAmbiguityIgnored(true)
+                .setFieldAccessLevel(PRIVATE);
+        return mapper;
+    }
+
+    private Properties additionalProperties() {
         Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "validate");
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL9Dialect");
+        properties.setProperty("hibernate.hbm2ddl.auto", hibernateHbm2ddlAutoProperty);
+        properties.setProperty("hibernate.dialect", hibernateDialectProperty);
         return properties;
     }
 }

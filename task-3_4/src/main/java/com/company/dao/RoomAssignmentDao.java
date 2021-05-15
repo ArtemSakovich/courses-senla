@@ -11,8 +11,12 @@ import java.util.List;
 @Repository
 public class RoomAssignmentDao extends AbstractDao<RoomAssignment> implements IRoomAssignmentDao {
 
-    @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private RoomAssignmentDao(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Override
     protected Class getEntityClass() {

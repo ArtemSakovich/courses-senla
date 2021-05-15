@@ -3,6 +3,8 @@ package com.company.model;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Entity
 @Table(name = "rooms")
 public class Room extends AEntity {
@@ -17,6 +19,8 @@ public class Room extends AEntity {
     private Integer numberOfBeds;
     @Column(name = "number_of_stars")
     private Integer numberOfStars;
+    @Transient
+    private Integer numberOfTenants;
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoomAssignment> roomAssignments;
 
@@ -89,6 +93,11 @@ public class Room extends AEntity {
 
     public boolean isFree() {
         return roomStatus.equals(RoomStatus.FREE);
+    }
+
+    public Integer getNumberOfTenants() {
+        return (int) roomAssignments.stream().filter(roomAssignment ->
+                RoomAssignmentStatus.ACTIVE.equals(roomAssignment.getRoomAssignmentStatus())).count();
     }
 
     @Override
