@@ -2,12 +2,16 @@ package com.company.service;
 
 import com.company.api.dao.*;
 import com.company.api.exceptions.OperationCancelledException;
+import com.company.api.mapper.IGuestMapper;
 import com.company.api.service.IGuestService;
 import com.company.api.service.IRoomAssignmentService;
 
+import com.company.dto.AccommodateGuestDto;
+import com.company.dto.GuestDto;
 import com.company.model.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,59 +21,57 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Service
 public class GuestService implements IGuestService {
-    @Autowired
     private IGuestDao guestDao;
-    @Autowired
     private IRoomDao roomDao;
-    @Autowired
     private IRoomAssignmentDao roomAssignmentDao;
-    @Autowired
     private IMaintenanceDao maintenanceDao;
-    @Autowired
     private IOrderedMaintenanceDao orderedMaintenanceDao;
-    @Autowired
     private IRoomAssignmentService roomAssignmentService;
+    private IGuestMapper guestMapper;
+    @Value("${allowedNumberOfNotes:10}")
+    private int allowedNumberOfNotes;
 
     private static final Logger log = Logger.getLogger(GuestService.class.getName());
 
-    private GuestService() {
-
+    @Autowired
+    private GuestService(IGuestDao guestDao, IRoomDao roomDao, IRoomAssignmentDao roomAssignmentDao,
+                         IMaintenanceDao maintenanceDao, IOrderedMaintenanceDao orderedMaintenanceDao,
+                         IRoomAssignmentService roomAssignmentService, IGuestMapper guestMapper) {
+        this.guestDao = guestDao;
+        this.roomDao = roomDao;
+        this.roomAssignmentDao = roomAssignmentDao;
+        this.maintenanceDao = maintenanceDao;
+        this.orderedMaintenanceDao = orderedMaintenanceDao;
+        this.roomAssignmentService = roomAssignmentService;
+        this.guestMapper = guestMapper;
     }
 
-    /**
-     * The method is called by the execute() method from AddGuest[Action] class. Receives from it, the first name,
-     * last name and age of the guest entered by the user through the console. A new object of the guest type is
-     * created, and the same parameters are passed to its constructor. Also, guests ID is generated and sets to
-     * new guest, after which the new guest will be saved in the DAO repository. The method returns a new guest object.
-     *
-     * @param name    guest's name
-     * @param surname guest's surname
-     * @param age     guest's age
-     * @return new guest object
-     */
     @Override
     @Transactional
-    public Guest addGuest(String name, String surname, Integer age) {
-        Guest guest = new Guest(name, surname, age);
-        guestDao.save(guest);
-        return guest;
+    public GuestDto addGuest(GuestDto guestDto) {
+        Guest entity = guestMapper.toEntity(guestDto);
+        guestDao.save(entity);
+        return guestMapper.toDto(entity);
     }
 
     @Override
     @Transactional(propagation = Propagation.NESTED, isolation = Isolation.READ_UNCOMMITTED)
-    public void accommodateToRoom(Long guestId, Long roomId, LocalDateTime checkOutDate) {
-        Guest guestToFlip = guestDao.getById(guestId);
-        Room roomToFlip = roomDao.getById(roomId);
+    public void accommodateToRoom(AccommodateGuestDto accommodateGuestDto) {
+        Guest guestToFlip = guestDao.getById(accommodateGuestDto.getGuestId());
+        Room roomToFlip = roomDao.getById(accommodateGuestDto.getRoomId());
         if (guestToFlip == null || roomToFlip == null) {
             log.warn("Incorrect input when trying to accommodate a guest");
             throw new IllegalArgumentException("Guest or room not found");
         }
         if (roomToFlip.getRoomStatus().equals(RoomStatus.FREE)) {
             RoomAssignment roomAssignment = new RoomAssignment(roomToFlip, guestToFlip,
-                    Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(checkOutDate), RoomAssignmentStatus.ACTIVE, Timestamp.valueOf(LocalDateTime.now()));
+                    Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()
+                    .plusDays(accommodateGuestDto.getNumberOfDays().longValue())), RoomAssignmentStatus.ACTIVE,
+                    Timestamp.valueOf(LocalDateTime.now()));
             roomToFlip.addRoomAssignment(roomAssignment);
             guestToFlip.addRoomAssignment(roomAssignment);
             roomAssignmentDao.save(roomAssignment);
@@ -135,6 +137,7 @@ public class GuestService implements IGuestService {
     }
 
     @Override
+    @Transactional
     public Double getAmountOfPaymentForTheRoom(Long guestId) {
         Guest guestToGetAmount = guestDao.getById(guestId);
         if (guestToGetAmount == null) {
@@ -154,19 +157,40 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    public List<Guest> getSortedGuests(String paramToSort) {
-        return guestDao.getSortedEntities(paramToSort);
+    @Transactional
+    public GuestDto changeGuestInfo(GuestDto guestDto) {
+        Guest guestToChange = guestDao.getById(guestDto.getId());
+        if (guestToChange == null) {
+            log.warn("Incorrect input when trying to change maintenance price");
+            throw new IllegalArgumentException("Maintenance not found!");
+        } else {
+            guestToChange.setAge(guestDto.getAge());
+            guestToChange.setName(guestDto.getName());
+            guestToChange.setSurname(guestDto.getSurname());
+            guestDao.update(guestToChange);
+        }
+        return guestMapper.toDto(guestDao.getById(guestDto.getId()));
     }
 
     @Override
-    public List<Guest> getAllGuests() {
-        return guestDao.getAll();
+    @Transactional
+    public List<GuestDto> getSortedGuests(String paramToSort) {
+        return guestDao.getSortedEntities(paramToSort).stream().map(guest ->
+                guestMapper.toDto(guest)).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
+    public List<GuestDto> getAllGuests() {
+        return guestDao.getAll().stream().map(guest ->
+                guestMapper.toDto(guest)).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
     public Integer getNumberOfGuests() {
         int totalNumberOfGuest = 0;
-        for (Guest guest : getAllGuests()) {
+        for (GuestDto guest : getAllGuests()) {
             if (!roomAssignmentDao.getActiveRoomAssignmentsByGuestId(guest.getId()).isEmpty()) {
                 totalNumberOfGuest++;
             }
@@ -175,7 +199,15 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    public List<Guest> getThreeLastGuests(Long roomId) {
-        return guestDao.getThreeLastGuests(roomId);
+    @Transactional
+    public List<GuestDto> getLastGuests(Long roomId) {
+        return guestDao.getLastGuests(roomId, allowedNumberOfNotes).stream().map(guest ->
+                guestMapper.toDto(guest)).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void deleteGuest(Long guestId) {
+        guestDao.delete(guestDao.getById(guestId));
     }
 }

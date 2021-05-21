@@ -1,31 +1,28 @@
 package com.company.api.service;
 
+import com.company.dto.RoomDto;
 import com.company.model.Room;
-import com.company.model.RoomStatus;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IRoomService {
 
-    Room addRoom(Integer numberOfBeds, Integer numberOfStars, Integer roomNumber, Double roomPrice);
+    RoomDto addRoom(RoomDto roomDto);
 
-    List<Room> getAllRooms();
+    List<RoomDto> getAllRooms();
 
-    Room getById(Long roomId);
+    RoomDto changeRoomInfo(RoomDto roomDto);
 
-    void changeRoomStatus(Long id, RoomStatus newRoomStatus);
-
-    void changeRoomPrice(Long id, Double newRoomPrice);
-
-    List<Room> getAllFreeRooms();
+    List<RoomDto> getAllFreeRooms();
 
     Integer getNumberOfFreeRooms();
 
     List<Room> getFreeRoomsByDate(LocalDateTime requiredDate);
 
-    List<Room> getSortedRooms(String paramToSort);
+    List<RoomDto> getSortedRooms(String paramToSort);
 
-    List<Room> getFreeSortedRooms(String paramToSort);
+    List<RoomDto> getFreeSortedRooms(String paramToSort);
+
+    void deleteRoom(Long roomId);
 }

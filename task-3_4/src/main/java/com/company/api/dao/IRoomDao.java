@@ -12,7 +12,5 @@ public interface IRoomDao extends IGenericDao<Room>{
 
     List<Room> getFreeRoomsByDate(LocalDateTime requiredDate);
 
-    List<Room> getSortedRooms(String paramToSort);
-
     List<Room> getFreeSortedRooms(String paramToSort);
 }

@@ -1,9 +1,6 @@
 package com.company.model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 @Entity
@@ -12,6 +9,8 @@ public class Guest extends AEntity {
     private String name;
     private String surname;
     private Integer age;
+    @Transient
+    private Boolean hasActiveRoomAssignment;
     @OneToMany(mappedBy = "guest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoomAssignment> roomAssignments;
 
@@ -55,6 +54,11 @@ public class Guest extends AEntity {
 
     public void setRoomAssignments(List<RoomAssignment> roomAssignments) {
         this.roomAssignments.addAll(roomAssignments);
+    }
+
+    public Boolean getHasActiveRoomAssignment() {
+        return roomAssignments.stream().anyMatch(roomAssignment ->
+                RoomAssignmentStatus.ACTIVE.equals(roomAssignment.getRoomAssignmentStatus()));
     }
 
     public void addRoomAssignment(RoomAssignment roomAssignment) {

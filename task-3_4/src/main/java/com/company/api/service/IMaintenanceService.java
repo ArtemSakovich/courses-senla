@@ -1,20 +1,24 @@
 package com.company.api.service;
 
-import com.company.model.Maintenance;
-import com.company.model.MaintenanceSection;
+import com.company.dto.MaintenanceDto;
 
 import java.util.List;
 
 public interface IMaintenanceService {
-    Maintenance addMaintenance(String name, Double price, MaintenanceSection section);
 
-    void changeMaintenancePrice(Long id, Double newPrice);
+    MaintenanceDto addMaintenance(MaintenanceDto maintenanceDto);
 
-    List<Maintenance> getSortedMaintenances(String paramToSort);
+    List<MaintenanceDto> getAllMaintenances();
 
-    List<Maintenance> getAllMaintenancesOfCertainGuest(Long guestId);
+    MaintenanceDto changeMaintenanceInfo(MaintenanceDto maintenanceDto);
 
-    List<Maintenance> getSortedMaintenancesOfCertainGuest(Long guestId, String paramToSort);
+    List<MaintenanceDto> getSortedMaintenances(String paramToSort);
 
-    List<Maintenance> getAllOrderedMaintenances();
+    List<MaintenanceDto> getAllMaintenancesOfCertainGuest(Long guestId);
+
+    List<MaintenanceDto> getSortedMaintenancesOfCertainGuest(Long guestId, String paramToSort);
+
+    List<MaintenanceDto> getAllOrderedMaintenances();
+
+    void deleteMaintenance(Long maintenanceId);
 }

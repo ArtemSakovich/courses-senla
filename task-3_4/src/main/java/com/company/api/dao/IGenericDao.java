@@ -2,7 +2,6 @@ package com.company.api.dao;
 
 import com.company.model.AEntity;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 public interface IGenericDao<T extends AEntity> {

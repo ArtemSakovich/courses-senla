@@ -10,7 +10,6 @@ public class OrderedMaintenance extends AEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_assignment_id")
     RoomAssignment roomAssignment;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "maintenance_id")
     Maintenance maintenance;

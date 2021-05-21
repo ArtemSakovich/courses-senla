@@ -13,8 +13,12 @@ import java.util.List;
 @Repository
 public class RoomDao extends AbstractDao<Room> implements IRoomDao {
 
-    @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private RoomDao(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     private final String PRICE_PARAM_TO_SORT = "roomPrice";
     private final String NUMBER_OF_BEDS_PARAM_TO_SORT = "numberOfBeds";
@@ -35,11 +39,6 @@ public class RoomDao extends AbstractDao<Room> implements IRoomDao {
     public List<Room> getFreeRoomsByDate(LocalDateTime requiredDate) {
         String SELECT_FREE_ROOMS_BY_DATE = "from Room r inner join RoomAssignment ra on r.id = ra.room.id where ra.checkOutDate < :checkOutDate";
         return entityManager.createQuery(SELECT_FREE_ROOMS_BY_DATE).setParameter("checkOutDate", requiredDate).getResultList();
-    }
-
-    @Override
-    public List<Room> getSortedRooms(String paramToSort) {
-        return getSortedEntities(paramToSort);
     }
 
     @Override
