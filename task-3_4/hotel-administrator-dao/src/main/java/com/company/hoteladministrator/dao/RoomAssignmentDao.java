@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public class RoomAssignmentDao extends AbstractDao<RoomAssignment> implements IRoomAssignmentDao {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Autowired
     private RoomAssignmentDao(EntityManager entityManager) {
@@ -20,7 +20,7 @@ public class RoomAssignmentDao extends AbstractDao<RoomAssignment> implements IR
     }
 
     @Override
-    protected Class getEntityClass() {
+    protected Class<RoomAssignment> getEntityClass() {
         return RoomAssignment.class;
     }
 

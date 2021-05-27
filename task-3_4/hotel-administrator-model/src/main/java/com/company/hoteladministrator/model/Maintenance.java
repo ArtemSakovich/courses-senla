@@ -8,6 +8,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "maintenances")
 public class Maintenance extends AEntity {
+
     @Column(name = "maintenance_name")
     private String maintenanceName;
     @Column(name = "maintenance_price")
@@ -59,7 +60,6 @@ public class Maintenance extends AEntity {
 
     @Override
     public boolean equals(Object o) {
-
         if (o == this) return true;
         if (!(o instanceof Maintenance)) {
             return false;

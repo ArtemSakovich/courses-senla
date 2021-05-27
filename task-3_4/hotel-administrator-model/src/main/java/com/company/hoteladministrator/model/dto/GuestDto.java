@@ -1,5 +1,7 @@
 package com.company.hoteladministrator.model.dto;
 
+import com.company.hoteladministrator.model.dto.generic.AbstractDto;
+
 public class GuestDto extends AbstractDto {
 
     private String name;

@@ -18,11 +18,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@PropertySource({"classpath:service.properties"})
+@Transactional
 public class RoomService implements IRoomService {
 
-    private IRoomDao roomDao;
-    private IRoomMapper roomMapper;
+    private final IRoomDao roomDao;
+    private final IRoomMapper roomMapper;
     @Value("${isRoomStatusChangeable:false}")
     private boolean isRoomStatusChangeable;
 
@@ -35,7 +35,6 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    @Transactional
     public RoomDto addRoom(RoomDto roomDto) {
         Room entity = roomMapper.toEntity(roomDto);
         entity.setRoomStatus(RoomStatus.FREE);
@@ -44,14 +43,13 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    @Transactional
     public List<RoomDto> getAllRooms() {
-        return roomDao.getAll().stream().map(room ->
-                roomMapper.toDto(room)).collect(Collectors.toList());
+        return roomDao.getAll().stream()
+                .map(roomMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public RoomDto changeRoomInfo(RoomDto roomDto) {
         if (isRoomStatusChangeable) {
             Room roomToChange = roomDao.getById(roomDto.getId());
@@ -74,14 +72,13 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    @Transactional
     public List<RoomDto> getAllFreeRooms() {
-        return roomDao.getFreeRooms().stream().map(room ->
-                roomMapper.toDto(room)).collect(Collectors.toList());
+        return roomDao.getFreeRooms().stream()
+                .map(roomMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public Integer getNumberOfFreeRooms() {
         return getAllFreeRooms().size();
     }
@@ -92,33 +89,30 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    @Transactional
     public RoomDto getRoomById(Long id) {
         return roomMapper.toDto(roomDao.getById(id));
     }
 
     @Override
-    @Transactional
     public List<RoomDto> getSortedRooms(String paramToSort) {
-        return roomDao.getSortedEntities(paramToSort).stream().map(room ->
-                roomMapper.toDto(room)).collect(Collectors.toList());
+        return roomDao.getSortedEntities(paramToSort).stream()
+                .map(roomMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public List<RoomDto> getFreeSortedRooms(String paramToSort) {
-        return roomDao.getFreeSortedRooms(paramToSort).stream().map(room ->
-                roomMapper.toDto(room)).collect(Collectors.toList());
+        return roomDao.getFreeSortedRooms(paramToSort).stream()
+                .map(roomMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public RoomDto getRoomByGuestId(Long guestId) {
         return roomMapper.toDto(roomDao.getRoomByGuestId(guestId));
     }
 
     @Override
-    @Transactional
     public void deleteRoom(Long roomId) {
         roomDao.delete(roomDao.getById(roomId));
     }

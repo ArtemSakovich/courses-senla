@@ -1,6 +1,9 @@
 package com.company.hoteladministrator.model.dto;
 
-public class AccommodateGuestDto {
+import com.company.hoteladministrator.model.dto.generic.AbstractDto;
+
+public class AccommodateGuestDto extends AbstractDto {
+
     private Long guestId;
     private Long roomId;
     private Integer numberOfDays;

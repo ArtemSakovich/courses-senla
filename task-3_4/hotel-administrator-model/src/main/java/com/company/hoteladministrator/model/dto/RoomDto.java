@@ -1,8 +1,10 @@
 package com.company.hoteladministrator.model.dto;
 
+import com.company.hoteladministrator.model.dto.generic.AbstractDto;
 import com.company.hoteladministrator.model.enums.RoomStatus;
 
 public class RoomDto extends AbstractDto {
+
     private Integer roomNumber;
     private RoomStatus roomStatus;
     private Double roomPrice;

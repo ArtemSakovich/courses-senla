@@ -12,7 +12,7 @@ import java.util.Objects;
 @Component
 public class RoomMapper implements IRoomMapper {
 
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     @Autowired
     private RoomMapper(ModelMapper mapper) {

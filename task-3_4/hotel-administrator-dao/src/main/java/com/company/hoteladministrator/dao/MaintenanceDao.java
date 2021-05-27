@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public class MaintenanceDao extends AbstractDao<Maintenance> implements IMaintenanceDao {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Autowired
     private MaintenanceDao (EntityManager entityManager) {
@@ -21,7 +21,7 @@ public class MaintenanceDao extends AbstractDao<Maintenance> implements IMainten
     }
 
     @Override
-    protected Class getEntityClass() {
+    protected Class<Maintenance> getEntityClass() {
         return Maintenance.class;
     }
 

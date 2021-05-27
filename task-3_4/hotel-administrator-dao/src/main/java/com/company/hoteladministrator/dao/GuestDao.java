@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public class GuestDao extends AbstractDao<Guest> implements IGuestDao {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Autowired
     private GuestDao(EntityManager entityManager) {
@@ -20,7 +20,7 @@ public class GuestDao extends AbstractDao<Guest> implements IGuestDao {
     }
 
     @Override
-    protected Class getEntityClass() {
+    protected Class<Guest> getEntityClass() {
         return Guest.class;
     }
 

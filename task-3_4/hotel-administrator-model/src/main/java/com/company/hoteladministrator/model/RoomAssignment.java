@@ -7,9 +7,11 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
 @Entity
 @Table(name = "room_assignments")
 public class RoomAssignment extends AEntity {
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
@@ -101,5 +103,4 @@ public class RoomAssignment extends AEntity {
     public void addMaintenance(OrderedMaintenance maintenance) {
         maintenances.add(maintenance);
     }
-
 }

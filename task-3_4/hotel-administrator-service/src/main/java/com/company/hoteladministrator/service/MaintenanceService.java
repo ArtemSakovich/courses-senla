@@ -14,10 +14,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class MaintenanceService implements IMaintenanceService {
 
-    private IMaintenanceDao maintenanceDao;
-    private IMaintenanceMapper maintenanceMapper;
+    private final IMaintenanceDao maintenanceDao;
+    private final IMaintenanceMapper maintenanceMapper;
 
     private static final Logger log = Logger.getLogger(MaintenanceService.class.getName());
 
@@ -28,7 +29,6 @@ public class MaintenanceService implements IMaintenanceService {
     }
 
     @Override
-    @Transactional
     public MaintenanceDto addMaintenance(MaintenanceDto maintenanceDto) {
         Maintenance entity = maintenanceMapper.toEntity(maintenanceDto);
         maintenanceDao.save(entity);
@@ -36,14 +36,13 @@ public class MaintenanceService implements IMaintenanceService {
     }
 
     @Override
-    @Transactional
     public List<MaintenanceDto> getAllMaintenances() {
-        return maintenanceDao.getAll().stream().map(maintenance ->
-                maintenanceMapper.toDto(maintenance)).collect(Collectors.toList());
+        return maintenanceDao.getAll().stream()
+                .map(maintenanceMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public MaintenanceDto changeMaintenanceInfo(MaintenanceDto maintenanceDto) {
         Maintenance maintenanceToChange = maintenanceDao.getById(maintenanceDto.getId());
         if (maintenanceToChange == null) {
@@ -59,41 +58,39 @@ public class MaintenanceService implements IMaintenanceService {
     }
 
     @Override
-    @Transactional
     public List<MaintenanceDto> getSortedMaintenances(String paramToSort) {
-        return maintenanceDao.getSortedMaintenances(paramToSort).stream().map(maintenance ->
-                maintenanceMapper.toDto(maintenance)).collect(Collectors.toList());
+        return maintenanceDao.getSortedMaintenances(paramToSort).stream()
+                .map(maintenanceMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public MaintenanceDto getMaintenanceById(Long id) {
         return maintenanceMapper.toDto(maintenanceDao.getById(id));
     }
 
     @Override
-    @Transactional
     public List<MaintenanceDto> getSortedMaintenancesOfCertainGuest(Long guestId, String paramToSort) {
-        return maintenanceDao.getSortedMaintenancesOfCertainGuest(guestId, paramToSort).stream().map(orderedMaintenance ->
-                maintenanceMapper.toDto(maintenanceDao.getById(orderedMaintenance.getId()))).collect(Collectors.toList());
+        return maintenanceDao.getSortedMaintenancesOfCertainGuest(guestId, paramToSort).stream()
+                .map(orderedMaintenance -> maintenanceMapper.toDto(maintenanceDao.getById(orderedMaintenance.getId())))
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public List<MaintenanceDto> getAllMaintenancesOfCertainGuest(Long guestId) {
-        return maintenanceDao.getAllMaintenancesOfCertainGuest(guestId).stream().map(orderedMaintenance ->
-                maintenanceMapper.toDto(maintenanceDao.getById(orderedMaintenance.getId()))).collect(Collectors.toList());
+        return maintenanceDao.getAllMaintenancesOfCertainGuest(guestId).stream()
+                .map(orderedMaintenance -> maintenanceMapper.toDto(maintenanceDao.getById(orderedMaintenance.getId())))
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public List<MaintenanceDto> getAllOrderedMaintenances() {
-        return maintenanceDao.getAllOrderedMaintenances().stream().map(guest ->
-                maintenanceMapper.toDto(guest)).collect(Collectors.toList());
+        return maintenanceDao.getAllOrderedMaintenances().stream()
+                .map(maintenanceMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public void deleteMaintenance(Long maintenanceId) {
         maintenanceDao.delete(maintenanceDao.getById(maintenanceId));
     }

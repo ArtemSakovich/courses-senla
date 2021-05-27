@@ -11,6 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "rooms")
 public class Room extends AEntity {
+
     @Column(name = "room_number")
     private Integer roomNumber;
     @Enumerated(EnumType.STRING)
@@ -116,7 +117,6 @@ public class Room extends AEntity {
 
     @Override
     public boolean equals(Object o) {
-
         if (o == this) return true;
         if (!(o instanceof Room)) {
             return false;

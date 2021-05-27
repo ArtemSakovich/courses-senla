@@ -12,7 +12,7 @@ import java.util.Objects;
 @Component
 public class GuestMapper implements IGuestMapper {
 
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     @Autowired
     private GuestMapper(ModelMapper mapper) {

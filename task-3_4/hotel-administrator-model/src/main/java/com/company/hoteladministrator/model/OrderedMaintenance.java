@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "ordered_maintenances")
 public class OrderedMaintenance extends AEntity {
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_assignment_id")
     RoomAssignment roomAssignment;

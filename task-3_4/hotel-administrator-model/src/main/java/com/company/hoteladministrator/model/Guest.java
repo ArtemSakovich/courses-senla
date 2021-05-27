@@ -6,9 +6,11 @@ import com.company.hoteladministrator.model.generic.AEntity;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
 @Entity
 @Table(name = "guests")
 public class Guest extends AEntity {
+
     private String name;
     private String surname;
     private Integer age;
@@ -79,7 +81,6 @@ public class Guest extends AEntity {
 
     @Override
     public boolean equals(Object o) {
-
         if (o == this) return true;
         if (!(o instanceof Guest)) {
             return false;

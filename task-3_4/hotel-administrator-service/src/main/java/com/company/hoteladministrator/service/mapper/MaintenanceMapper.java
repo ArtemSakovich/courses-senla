@@ -12,7 +12,7 @@ import java.util.Objects;
 @Component
 public class MaintenanceMapper implements IMaintenanceMapper {
 
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     @Autowired
     private MaintenanceMapper(ModelMapper mapper) {

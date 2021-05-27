@@ -1,27 +1,23 @@
 package com.company.hoteladministrator.service;
 
-import com.company.hoteladministrator.api.dao.IRoomAssignmentDao;
 import com.company.hoteladministrator.api.dao.IRoomDao;
 import com.company.hoteladministrator.api.service.IRoomAssignmentService;
 import com.company.hoteladministrator.model.OrderedMaintenance;
 import com.company.hoteladministrator.model.RoomAssignment;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
+@Transactional
 public class RoomAssignmentService implements IRoomAssignmentService {
 
-    private IRoomAssignmentDao roomAssignmentDao;
-    private IRoomDao roomDao;
-
-    private static final Logger log = Logger.getLogger(RoomAssignmentService.class.getName());
+    private final IRoomDao roomDao;
 
     @Autowired
-    private RoomAssignmentService(IRoomAssignmentDao roomAssignmentDao, IRoomDao roomDao) {
-        this.roomAssignmentDao = roomAssignmentDao;
+    private RoomAssignmentService(IRoomDao roomDao) {
         this.roomDao = roomDao;
     }
 

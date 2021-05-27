@@ -1,6 +1,7 @@
-package com.company.hoteladministrator.model.dto;
+package com.company.hoteladministrator.model.dto.generic;
 
 public abstract class AbstractDto {
+
     private Long id;
 
     public Long getId() {

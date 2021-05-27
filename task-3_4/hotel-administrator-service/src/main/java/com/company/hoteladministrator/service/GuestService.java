@@ -14,8 +14,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
@@ -25,14 +23,15 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class GuestService implements IGuestService {
-    private IGuestDao guestDao;
-    private IRoomDao roomDao;
-    private IRoomAssignmentDao roomAssignmentDao;
-    private IMaintenanceDao maintenanceDao;
-    private IOrderedMaintenanceDao orderedMaintenanceDao;
-    private IRoomAssignmentService roomAssignmentService;
-    private IGuestMapper guestMapper;
+    private final IGuestDao guestDao;
+    private final IRoomDao roomDao;
+    private final IRoomAssignmentDao roomAssignmentDao;
+    private final IMaintenanceDao maintenanceDao;
+    private final IOrderedMaintenanceDao orderedMaintenanceDao;
+    private final IRoomAssignmentService roomAssignmentService;
+    private final IGuestMapper guestMapper;
     @Value("${allowedNumberOfNotes:10}")
     private int allowedNumberOfNotes;
 
@@ -52,7 +51,6 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    @Transactional
     public GuestDto addGuest(GuestDto guestDto) {
         Guest entity = guestMapper.toEntity(guestDto);
         guestDao.save(entity);
@@ -60,7 +58,6 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.NESTED, isolation = Isolation.READ_UNCOMMITTED)
     public void accommodateToRoom(AccommodateGuestDto accommodateGuestDto) {
         Guest guestToFlip = guestDao.getById(accommodateGuestDto.getGuestId());
         Room roomToFlip = roomDao.getById(accommodateGuestDto.getRoomId());
@@ -90,7 +87,6 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    @Transactional
     public void evictFromRoom(Long guestId) {
         Guest guestToEvict = guestDao.getById(guestId);
         if (guestToEvict == null) {
@@ -114,7 +110,6 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    @Transactional
     public void orderMaintenance(Long guestId, Long maintenanceId) {
         Guest guestToOrderMaintenance = guestDao.getById(guestId);
         Maintenance maintenanceToOrder = maintenanceDao.getById(maintenanceId);
@@ -138,7 +133,6 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    @Transactional
     public Double getAmountOfPaymentForTheRoom(Long guestId) {
         Guest guestToGetAmount = guestDao.getById(guestId);
         if (guestToGetAmount == null) {
@@ -158,7 +152,6 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    @Transactional
     public GuestDto changeGuestInfo(GuestDto guestDto) {
         Guest guestToChange = guestDao.getById(guestDto.getId());
         if (guestToChange == null) {
@@ -174,27 +167,25 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    @Transactional
     public List<GuestDto> getSortedGuests(String paramToSort) {
-        return guestDao.getSortedEntities(paramToSort).stream().map(guest ->
-                guestMapper.toDto(guest)).collect(Collectors.toList());
+        return guestDao.getSortedEntities(paramToSort).stream()
+                .map(guestMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public List<GuestDto> getAllGuests() {
-        return guestDao.getAll().stream().map(guest ->
-                guestMapper.toDto(guest)).collect(Collectors.toList());
+        return guestDao.getAll().stream()
+                .map(guestMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public GuestDto getGuestById(Long id) {
         return guestMapper.toDto(guestDao.getById(id));
     }
 
     @Override
-    @Transactional
     public Integer getNumberOfGuests() {
         int totalNumberOfGuest = 0;
         for (GuestDto guest : getAllGuests()) {
@@ -206,14 +197,13 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    @Transactional
     public List<GuestDto> getLastGuests(Long roomId) {
-        return guestDao.getLastGuests(roomId, allowedNumberOfNotes).stream().map(guest ->
-                guestMapper.toDto(guest)).collect(Collectors.toList());
+        return guestDao.getLastGuests(roomId, allowedNumberOfNotes).stream()
+                .map(guestMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
     public void deleteGuest(Long guestId) {
         guestDao.delete(guestDao.getById(guestId));
     }

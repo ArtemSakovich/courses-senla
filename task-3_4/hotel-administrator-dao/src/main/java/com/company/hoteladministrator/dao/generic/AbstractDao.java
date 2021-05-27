@@ -11,6 +11,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
+
 @Repository
 public abstract class AbstractDao<T extends AEntity> implements IGenericDao<T> {
 

@@ -1,6 +1,6 @@
 package com.company.hoteladministrator.model.dto;
 
-
+import com.company.hoteladministrator.model.dto.generic.AbstractDto;
 import com.company.hoteladministrator.model.enums.MaintenanceSection;
 
 public class MaintenanceDto extends AbstractDto {

@@ -1,6 +1,5 @@
 package com.company.hoteladministrator.api.service;
 
-
 import com.company.hoteladministrator.model.dto.MaintenanceDto;
 
 import java.util.List;

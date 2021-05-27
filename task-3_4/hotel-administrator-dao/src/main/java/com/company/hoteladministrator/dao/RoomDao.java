@@ -13,19 +13,15 @@ import java.util.List;
 @Repository
 public class RoomDao extends AbstractDao<Room> implements IRoomDao {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Autowired
     private RoomDao(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
-    private final String PRICE_PARAM_TO_SORT = "roomPrice";
-    private final String NUMBER_OF_BEDS_PARAM_TO_SORT = "numberOfBeds";
-    private final String NUMBER_OF_STARS_PARAM_TO_SORT = "numberOfStars";
-
     @Override
-    protected Class getEntityClass() {
+    protected Class<Room> getEntityClass() {
         return Room.class;
     }
 

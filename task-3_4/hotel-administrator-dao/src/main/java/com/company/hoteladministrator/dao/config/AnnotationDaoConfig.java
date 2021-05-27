@@ -44,6 +44,7 @@ public class AnnotationDaoConfig {
         }
         return dataSource;
     }
+
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         if (emf == null) {
