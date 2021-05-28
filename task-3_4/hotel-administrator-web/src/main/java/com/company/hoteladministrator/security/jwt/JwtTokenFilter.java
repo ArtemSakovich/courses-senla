@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
-
 @Component
 public class JwtTokenFilter implements Filter {
 
@@ -29,23 +27,19 @@ public class JwtTokenFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+
     }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException {
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) req);
         if (token != null && jwtTokenProvider.validateToken(token)) {
             Authentication auth = jwtTokenProvider.getAuthentication(token);
 
             if (auth != null) {
                 SecurityContextHolder.getContext().setAuthentication(auth);
-               // ((HttpServletRequest) req).getSession(true).setAttribute(SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
                 filterChain.doFilter(req, res);
-            } else {
-                responseBody = new HashMap<>();
-                responseBody.put("message", "You don't have enough permissions");
-                mapper.writeValue(res.getWriter(), responseBody);
             }
         } else {
             responseBody = new HashMap<>();

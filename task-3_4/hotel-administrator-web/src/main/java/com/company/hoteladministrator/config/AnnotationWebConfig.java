@@ -19,8 +19,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class AnnotationWebConfig extends WebSecurityConfigurerAdapter {
 
     private static final String LOGIN_ENDPOINT = "/login";
-    private static final String ADMIN_ENDPOINT = "*/admin/**";
-    private static final String USER_ENDPOINT = "*/user/**";
+    private static final String ADMIN_ENDPOINT = "/admin/**";
+    private static final String USER_ENDPOINT = "/user/**";
+
+    private static final String ROLE_ADMIN = "ADMIN";
+    private static final String ROLE_USER = "USER";
 
     @Bean
     @Override
@@ -31,15 +34,11 @@ public class AnnotationWebConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
                 .authorizeRequests()
-                .antMatchers(LOGIN_ENDPOINT).permitAll()
-                .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
-                .antMatchers(USER_ENDPOINT).hasRole("USER")
-                .antMatchers(USER_ENDPOINT).hasRole("ADMIN")
+                .mvcMatchers(LOGIN_ENDPOINT).permitAll()
+                .mvcMatchers(ADMIN_ENDPOINT).hasRole(ROLE_ADMIN)
+                .mvcMatchers(USER_ENDPOINT).hasAnyRole(ROLE_ADMIN, ROLE_USER)
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
