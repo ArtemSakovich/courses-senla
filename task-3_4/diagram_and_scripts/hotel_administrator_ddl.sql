@@ -1,3 +1,5 @@
+CREATE DATABASE hotel_administrator_db;
+
 CREATE TABLE guests (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(20) NOT NULL,
@@ -46,4 +48,23 @@ CREATE TABLE ordered_maintenances (
     order_date TIMESTAMP NOT NULL,
     CONSTRAINT room_assignment_id_fk FOREIGN KEY (room_assignment_id) REFERENCES room_assignments (id),
     CONSTRAINT maintenance_id_fk FOREIGN KEY (maintenance_id) REFERENCES maintenances (id)
+);
+
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE roles (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE users_roles (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
+    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users (id),
+    CONSTRAINT role_id_fk FOREIGN KEY (role_id) REFERENCES roles (id)
 );

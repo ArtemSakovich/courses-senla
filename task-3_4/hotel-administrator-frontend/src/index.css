@@ -1,0 +1,196 @@
+body {
+  margin: 0;
+  background: whitesmoke;
+  font-family: roboto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: "Apple Braille", source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  monospace;
+}
+
+
+:root {
+  --bg:  #242526;
+  --bg-accent: #484a4d;
+  --text-color: #dadce1;
+  --nav-size: 80px;
+  --border: 1px solid #474a4d;
+  --border-radius: 8px;
+  --speed: 500ms;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Top Navigation Bar */
+
+/* <nav> */
+.navbar2 {
+  height: var(--nav-size);
+  background-color: var(--bg);
+  padding: 0 1rem;
+  border-bottom: var(--border);
+  align-content: center;
+}
+
+/* <ul> */
+.navbar-nav2 {
+  max-width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
+
+/* <li> */
+.nav-item2 {
+  width: calc(var(--nav-size) * 7);
+  display: flex;
+  align-items: center!important;
+  justify-content: center!important;
+  font-family: "Apple Braille", sans-serif;
+}
+
+/* Icon Button */
+.icon-button {
+  --button-size: calc(var(--nav-size) * 0.5);
+  width: 150px;
+  height: 20px;
+  background-color: var(--bg);
+  padding: 5px;
+  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 300ms;
+}
+
+
+
+.icon-button svg {
+  fill: var(--text-color);
+  width: 30px;
+  height: 20px;
+}
+
+
+/* Dropdown Menu */
+
+.dropdown2 {
+  position: absolute;
+  top: 65px;
+  width: 300px;
+  transform: translateX(-5%);
+  background-color: var(--bg);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  overflow: hidden;
+  transition: height var(--speed) ease;
+  z-index: 999;
+}
+
+.menu2 {
+  width: 100%;
+}
+
+.menu-item2 {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-radius: var(--border-radius);
+  transition: background var(--speed);
+  padding: 0.5rem;
+}
+
+.menu-item .icon-button {
+  margin-right: 0.5rem;
+}
+
+
+.menu-item .icon-button:hover {
+  filter: none;
+}
+
+.menu-item:hover {
+  background-color: #525357;
+}
+
+.icon-right {
+  margin-left: auto;
+}
+
+/* CSSTransition classes  */
+.menu-primary-enter {
+  position: absolute;
+  transform: translateX(-110%);
+}
+.menu-primary-enter-active {
+  transform: translateX(0%);
+  transition: all var(--speed) ease;
+}
+.menu-primary-exit {
+  position: absolute;
+}
+.menu-primary-exit-active {
+  transform: translateX(-110%);
+  transition: all var(--speed) ease;
+}
+
+
+.menu-secondary-enter {
+  transform: translateX(110%);
+}
+.menu-secondary-enter-active {
+  transform: translateX(0%);
+  transition: all var(--speed) ease;
+}
+.menu-secondary-exit {
+
+}
+.menu-secondary-exit-active {
+  transform: translateX(110%);
+  transition: all var(--speed) ease;
+}
+
+.redButtons {
+  background-color: red;
+  border-radius: 7px;
+  margin: 10px;
+}
+
+.greenButtons {
+  background-color: green;
+  border: 1px black solid;
+  padding: 6px;
+  border-radius: 7px;
+  margin: 10px;
+}
+
+.orangeButtons {
+  background-color: orange;
+  border: 1px black solid;
+  padding: 6px;
+  border-radius: 7px;
+  margin: 10px;
+}
+
+.blueButtons {
+  background-color: #86b7fe;
+  border: 1px black solid;
+  padding: 6px;
+  border-radius: 7px;
+  margin: 10px;
+}
+
+.updateButton {
+  background-color: green;
+  border-radius: 7px;
+  margin: 10px;
+  color: white;
+}
